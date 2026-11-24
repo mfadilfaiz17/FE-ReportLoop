@@ -185,12 +185,11 @@ function renderAdminTracking(rep) {
     ? `<ul class="mt-2 space-y-1 border-t border-ink-200 dark:border-ink-800 pt-2 text-xs text-ink-600 dark:text-ink-300">
         ${history.map((h) => {
           const toLabel = STATUS_LABEL[h.to] || h.to;
-          const actor = h.by || 'Petugas Sarpras';
           const when = formatTrackDate(h.at);
-          return `<li>Status ke <strong>${escapeHtml(toLabel)}</strong> oleh ${escapeHtml(actor)}${when ? ` (${escapeHtml(when)})` : ''}</li>`;
+          return `<li>Status ke <strong>${escapeHtml(toLabel)}</strong> oleh Admin${when ? ` (${escapeHtml(when)})` : ''}</li>`;
         }).join('')}
       </ul>`
-    : `<p class="mt-2 border-t border-ink-200 dark:border-ink-800 pt-2 text-xs text-ink-600 dark:text-ink-300">Menunggu antrean tindakan Admin Sarpras.</p>`;
+    : '';
 
   return `
     <div class="track-box" aria-label="Progres pengerjaan admin">

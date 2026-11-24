@@ -56,14 +56,15 @@ export function renderProfilePanel(onSessionUpdated) {
     const latest = Array.isArray(rep.status_history) && rep.status_history.length > 0
       ? rep.status_history[rep.status_history.length - 1]
       : null;
+    const when = latest ? formatTrackTime(latest.at) : '';
     const noteText = latest
-      ? `Admin: ${latest.by || 'Petugas Sarpras'}${formatTrackTime(latest.at) ? ' (' + formatTrackTime(latest.at) + ')' : ''}`
-      : 'Menunggu tindakan Admin Sarpras';
+      ? `Admin${when ? ' (' + when + ')' : ''}`
+      : '';
     return `
       <div class="mt-2 track-box" aria-label="Progres pengerjaan admin">
         <div class="flex items-center justify-between gap-2 mb-1.5">
           <span class="text-xs font-bold text-ink-900 dark:text-white">Tahap ${stage} dari 3: ${escapeHtml(STATUS_LABEL[rep.status] || rep.status)}</span>
-          <span class="text-xs text-ink-600 dark:text-ink-300">${escapeHtml(noteText)}</span>
+          ${noteText ? `<span class="text-xs text-ink-600 dark:text-ink-300">${escapeHtml(noteText)}</span>` : ''}
         </div>
         <div class="track-steps">
           <div class="track-step ${stage >= 1 ? 'is-done' : ''}"><div class="track-bar" aria-hidden="true"></div><span class="track-label">1. Diterima</span></div>
@@ -177,7 +178,6 @@ export function renderProfilePanel(onSessionUpdated) {
           !isAdmin
             ? `<div class="card p-5 sm:p-6">
                 <h2 class="text-lg font-extrabold text-ink-900 dark:text-white">Pelacakan laporan saya (${userReports.length})</h2>
-                <p class="hint">Pantau tahapan pengerjaan Admin Sarpras dari laporan yang Anda kirim.</p>
                 ${
                   userReports.length === 0
                     ? `<div class="mt-4 rounded-xl border border-ink-200 dark:border-ink-800 p-5 text-center text-sm text-ink-600 dark:text-ink-300">
@@ -215,7 +215,6 @@ export function renderProfilePanel(onSessionUpdated) {
               </div>
               <div class="card p-5 sm:p-6">
                 <h2 class="text-lg font-extrabold text-ink-900 dark:text-white">Laporan yang Anda dukung (${supportedReports.length})</h2>
-                <p class="hint">Daftar laporan fasilitas kampus yang telah Anda beri dukungan (+1 Upvote).</p>
                 ${
                   supportedReports.length === 0
                     ? `<div class="mt-4 rounded-xl border border-ink-200 dark:border-ink-800 p-5 text-center text-sm text-ink-600 dark:text-ink-300">
