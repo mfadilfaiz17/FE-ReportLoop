@@ -11,16 +11,17 @@ import { focusMapOn } from './map.js';
 import { renderProfilePanel } from './profile.js';
 import { setScope } from './publicBoard.js';
 
+// Halaman profil dibuka lewat tombol akun di pojok header, bukan dari daftar menu
+const PROFILE_VIEW = 'profil';
+
 const NAV_ITEMS = {
   user: [
     { view: 'lapor', label: 'Peta & Lapor' },
     { view: 'papan', label: 'Papan Laporan' },
-    { view: 'profil', label: 'Profil Saya' },
   ],
   admin: [
     { view: 'antrean', label: 'Antrean Triase' },
     { view: 'peta', label: 'Peta Kampus' },
-    { view: 'profil', label: 'Profil Petugas' },
   ],
 };
 
@@ -41,7 +42,7 @@ export function getActiveView() {
 }
 
 export function switchView(role, viewId, { updateHash = true } = {}) {
-  const validViews = (NAV_ITEMS[role] || []).map((item) => item.view);
+  const validViews = [...(NAV_ITEMS[role] || []).map((item) => item.view), PROFILE_VIEW];
   const targetView = validViews.includes(viewId) ? viewId : DEFAULT_VIEW[role];
   activeView = targetView;
 

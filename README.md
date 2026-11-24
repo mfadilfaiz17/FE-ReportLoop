@@ -45,7 +45,7 @@ Untuk melepas Client ID: `localStorage.removeItem('reportloop.googleClientId')`.
 Akun disimpan secara lokal di `localStorage` browser masing-masing.
 
 - **Mahasiswa (Pelapor)**
-  1. Daftar di `html/daftar.html` menggunakan **NIM (6â€“12 digit)**, **Email Google umum** (`@gmail.com`), dan kata sandi (min. 8 karakter), atau gunakan tombol **Daftar dengan Google** (OAuth).
+  1. Daftar di `html/daftar.html` menggunakan **NIM (12 digit)**, **Email Google umum** (`@gmail.com`), dan kata sandi (min. 8 karakter), atau gunakan tombol **Daftar dengan Google** (OAuth).
   2. Masuk melalui `html/masuk.html` (via NIM + sandi atau **Masuk dengan Google**), dengan opsi **Ingat saya di perangkat ini** (sesi 7 hari) dan **Lupa kata sandi?** untuk mengakses `html/user.html`.
 - **Admin Sarpras (Pengelola)**
   1. Daftar di `html/admin-daftar.html` menggunakan **Email Google**, kata sandi (min. 8 karakter), dan kode undangan demo (diberikan terpisah oleh tim pengembang, tidak ditulis di repo), atau gunakan tombol **Daftar dengan Google** + kode undangan.
@@ -57,21 +57,21 @@ Akun disimpan secara lokal di `localStorage` browser masing-masing.
 
 ```text
 FE-ReportLoop/
-â”œâ”€â”€ index.html          # Landing page & pratinjau papan laporan publik
-â”œâ”€â”€ css/                # Token warna Light/Dark (base.css) & styling peta (map.css)
-â”œâ”€â”€ html/               # Halaman peran, halaman auth, dan partial komponen UI
-â”œâ”€â”€ js/
-â”‚   â”œâ”€â”€ main.js         # Entry point & inisialisasi modul
-â”‚   â”œâ”€â”€ config/         # Konstanta kampus, endpoint API, & konfigurasi Tailwind
-â”‚   â”œâ”€â”€ data/           # Data dummy SEED_REPORTS untuk Mode Demo
-â”‚   â”œâ”€â”€ state/          # Store state aplikasi
-â”‚   â”œâ”€â”€ services/       # API client FastAPI, auth demo, kalkulasi geo 15m, & NLP
-â”‚   â”œâ”€â”€ features/       # Kontroler UI (peta, foto, form, papan publik, panel admin)
-â”‚   â””â”€â”€ utils/          # Theme toggle, toast, badge, sanitasi HTML, scroll reveal
-â”œâ”€â”€ PRD.md              # Spesifikasi kebutuhan produk frontend
-â”œâ”€â”€ DESIGN.md           # Panduan sistem desain Light/Dark Mode
-â”œâ”€â”€ STACK.md            # Arsitektur teknis & peta migrasi ke React
-â””â”€â”€ CHECKLIST.md        # Checklist audit & roadmap pengerjaan
+index.html          # Landing page & pratinjau papan laporan publik
+css/                # Token warna Light/Dark (base.css) & styling peta (map.css)
+html/               # Halaman peran, halaman auth, dan partial komponen UI
+js/
+main.js         # Entry point & inisialisasi modul
+config/         # Konstanta kampus, endpoint API, & konfigurasi Tailwind
+data/           # Data dummy SEED_REPORTS untuk Mode Demo
+state/          # Store state aplikasi
+services/       # API client FastAPI, auth demo, kalkulasi geo 15m, & NLP
+features/       # Kontroler UI (peta, foto, form, papan publik, panel admin)
+utils/          # Theme toggle, toast, badge, sanitasi HTML, scroll reveal
+PRD.md              # Spesifikasi kebutuhan produk frontend
+DESIGN.md           # Panduan sistem desain Light/Dark Mode
+STACK.md            # Arsitektur teknis & peta migrasi ke React
+CHECKLIST.md        # Checklist audit & roadmap pengerjaan
 ```
 
 ---
