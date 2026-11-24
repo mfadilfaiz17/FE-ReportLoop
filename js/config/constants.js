@@ -5,7 +5,18 @@
 // ==========================================================================
 
 export const CAMPUS_CENTER = [-6.4085, 108.2815];
-export const FASTAPI_BASE_URL = 'http://127.0.0.1:8000';
+// Alamat backend bisa diganti tanpa ubah kode: localStorage.setItem('reportloop.apiBase', 'https://api.contoh.id')
+function resolveApiBase() {
+  try {
+    const custom = localStorage.getItem('reportloop.apiBase');
+    if (custom && /^https?:\/\//.test(custom)) return custom.replace(/\/+$/, '');
+  } catch (_) {
+    /* penyimpanan tidak tersedia */
+  }
+  return 'http://127.0.0.1:8000';
+}
+export const FASTAPI_BASE_URL = resolveApiBase();
+export const IS_LOCAL_HOST = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 
 // Batas area geofencing kampus Politeknik Negeri Indramayu
 export const CAMPUS_BOUNDARY = [

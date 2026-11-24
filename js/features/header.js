@@ -2,7 +2,7 @@
 // ReportLoop - Fitur header & pengalih halaman (Peta & Lapor, Papan, Profil)
 // ==========================================================================
 
-import { API_MODE_STYLES } from '../config/constants.js';
+import { API_MODE_STYLES, IS_LOCAL_HOST } from '../config/constants.js';
 import { state, resetToDemoData } from '../state/store.js';
 import { fetchReports } from '../services/api.js';
 import { logout, ROLE_LOGIN } from '../services/auth.js';
@@ -174,6 +174,17 @@ export function bindHeaderEvents(renderAll, session) {
   renderNav(session.role);
   renderSession(session);
   setApiModeUI('demo');
+
+  // Di domain publik tanpa alamat backend yang diatur, mode live tidak mungkin tersambung
+  let hasCustomApi = false;
+  try {
+    hasCustomApi = Boolean(localStorage.getItem('reportloop.apiBase'));
+  } catch (_) {
+    hasCustomApi = false;
+  }
+  if (!IS_LOCAL_HOST && !hasCustomApi) {
+    document.getElementById('btn-api-mode')?.classList.add('hidden');
+  }
 
   // Delegasi klik untuk semua tombol pindah halaman [data-nav-view]
   document.addEventListener('click', (event) => {

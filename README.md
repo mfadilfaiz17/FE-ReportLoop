@@ -31,7 +31,7 @@ Akun disimpan secara lokal di `localStorage` browser masing-masing.
   1. Daftar di `html/daftar.html` menggunakan **NIM (6â€“12 digit)** dan kata sandi (min. 8 karakter).
   2. Masuk melalui `html/masuk.html` untuk mengakses `html/user.html`.
 - **Admin Sarpras (Pengelola)**
-  1. Daftar di `html/admin-daftar.html` menggunakan **Email**, kata sandi (min. 8 karakter), dan kode undangan demo: **`SARPRAS-DEMO`**.
+  1. Daftar di `html/admin-daftar.html` menggunakan **Email**, kata sandi (min. 8 karakter), dan kode undangan demo (diberikan terpisah oleh tim pengembang, tidak ditulis di repo).
   2. Masuk melalui `html/admin-masuk.html` untuk mengakses panel triase `html/admin.html`.
 
 ---

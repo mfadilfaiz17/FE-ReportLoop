@@ -322,11 +322,37 @@ export async function upvoteReport(reportId, renderAll) {
   }
 }
 
+const STATUS_FLOW = {
+  Received: ['In Progress'],
+  'In Progress': ['Resolved'],
+  Resolved: [],
+};
+
 export async function updateReportStatus(reportId, newStatus, renderAll) {
+  const session = getSession();
+  if (!session || session.role !== 'admin') {
+    showToast('Hanya Admin Sarpras yang dapat mengubah status laporan.', 'error');
+    return;
+  }
+
   const target = state.reports.find((r) => String(r.id) === String(reportId));
   if (!target) return;
 
+  if (!(STATUS_FLOW[target.status] || []).includes(newStatus)) {
+    showToast('Perubahan status tidak valid. Urutannya: Diterima, Diperbaiki, lalu Selesai.', 'error');
+    return;
+  }
+  const previousStatus = target.status;
+
+  if (newStatus === 'Resolved' && !window.confirm(`Tandai "${target.title}" sebagai selesai? Status Selesai tidak bisa diubah kembali.`)) {
+    return;
+  }
+
   if (state.isLiveApi) {
+    if (!session.token) {
+      showToast('Mode live butuh token dari server, sedangkan login masih mode demo. Kembali ke mode demo untuk mengubah status.', 'warning');
+      return;
+    }
     const updated = await patchReportStatus(reportId, newStatus);
     if (updated) {
       Object.assign(target, updated);
@@ -337,6 +363,14 @@ export async function updateReportStatus(reportId, newStatus, renderAll) {
   } else {
     target.status = newStatus;
   }
+
+  if (!Array.isArray(target.status_history)) target.status_history = [];
+  target.status_history.push({
+    from: previousStatus,
+    to: newStatus,
+    by: session.name || session.id,
+    at: new Date().toISOString(),
+  });
 
   renderAll();
   const label = newStatus === 'In Progress' ? 'Diperbaiki' : newStatus === 'Resolved' ? 'Selesai' : 'Diterima';

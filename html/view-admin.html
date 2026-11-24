@@ -34,9 +34,21 @@
           </div>
           <button type="button" data-nav-view="peta" class="btn btn-sm btn-ghost w-full sm:w-auto sm:shrink-0">Lihat Peta Kampus</button>
         </div>
-        <p class="hint">Diurutkan otomatis berdasarkan dukungan terbanyak.</p>
+        <p id="queue-sort-hint" class="hint">Diurutkan otomatis berdasarkan dukungan terbanyak.</p>
 
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:max-w-xl">
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div>
+            <label for="admin-search" class="label">Cari laporan</label>
+            <input id="admin-search" type="search" class="field" placeholder="Judul, deskripsi, atau pelapor" autocomplete="off" />
+          </div>
+          <div>
+            <label for="admin-sort" class="label">Urutkan</label>
+            <select id="admin-sort" class="field">
+              <option value="upvotes">Dukungan terbanyak</option>
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama menunggu</option>
+            </select>
+          </div>
           <div>
             <label for="admin-filter-category" class="label">Kategori</label>
             <select id="admin-filter-category" class="field">

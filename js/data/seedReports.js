@@ -17,6 +17,11 @@ export const SEED_REPORTS = [
     status: 'In Progress',
     upvotes: 14,
     created_at: '2026-11-22T08:15:00+07:00',
+    user_id: '2205101',
+    reporter_name: 'Rizky Pratama',
+    status_history: [
+      { from: 'Received', to: 'In Progress', by: 'Petugas Sarpras', at: '2026-11-23T09:00:00+07:00' },
+    ],
   },
   {
     id: 'rep-002',
@@ -31,6 +36,8 @@ export const SEED_REPORTS = [
     status: 'Received',
     upvotes: 9,
     created_at: '2026-11-22T09:40:00+07:00',
+    user_id: '2205102',
+    reporter_name: 'Nadia Safitri',
   },
   {
     id: 'rep-003',
@@ -45,6 +52,8 @@ export const SEED_REPORTS = [
     status: 'Received',
     upvotes: 17,
     created_at: '2026-11-22T10:05:00+07:00',
+    user_id: '2205103',
+    reporter_name: 'Dimas Aditya',
   },
   {
     id: '28a63b7a',
@@ -59,6 +68,28 @@ export const SEED_REPORTS = [
     status: 'Received',
     upvotes: 4,
     created_at: '2026-11-22T02:12:24+07:00',
+    user_id: '2205104',
+    reporter_name: 'Siti Aisyah',
+  },
+  {
+    id: 'rep-005',
+    title: 'Proyektor ruang praktikum mati',
+    description: 'Proyektor di ruang praktikum 3 tidak menyala sehingga perkuliahan terganggu.',
+    photo_url: null,
+    photo_verification: 'Verified (Fresh camera photo)',
+    latitude: -6.4088,
+    longitude: 108.2826,
+    category: 'Infrastructure',
+    nlp_confidence: 0.88,
+    status: 'Resolved',
+    upvotes: 6,
+    created_at: '2026-11-20T13:30:00+07:00',
+    user_id: '2205105',
+    reporter_name: 'Fajar Nugroho',
+    status_history: [
+      { from: 'Received', to: 'In Progress', by: 'Petugas Sarpras', at: '2026-11-21T08:00:00+07:00' },
+      { from: 'In Progress', to: 'Resolved', by: 'Petugas Sarpras', at: '2026-11-21T15:20:00+07:00' },
+    ],
   },
 ];
 
