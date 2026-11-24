@@ -37,8 +37,8 @@ FE-ReportLoop/
 â”œâ”€â”€ index.html                  # Landing & Papan Publik Read-Only (Hero + Alur + Live Board)
 â”œâ”€â”€ user.html                   # Ruang Kerja Mahasiswa (Peta + Form Laporan + Papan Upvote)
 â”œâ”€â”€ admin.html                  # Panel Triase Admin Sarpras (KPI + Antrean Prioritas + Peta)
-â”œâ”€â”€ masuk.html / daftar.html    # Autentikasi Mahasiswa (NIM)
-â”œâ”€â”€ admin-masuk.html / admin-daftar.html # Autentikasi Petugas Sarpras terisolasi (terpisah dari UI publik/mahasiswa demi keamanan CIA; disiapkan untuk subdomain khusus di produksi)
+â”œâ”€â”€ masuk.html / daftar.html    # Autentikasi Mahasiswa (NIM + Email Google, Google OAuth, Lupa Sandi, Ingat Saya 7 hari)
+â”œâ”€â”€ admin-masuk.html / admin-daftar.html # Autentikasi Petugas Sarpras terisolasi (Email Google + Kode Undangan, Google OAuth, Lupa Sandi, Ingat Saya 7 hari; siap untuk subdomain khusus di produksi)
 â”œâ”€â”€ PRD.md                      # Spesifikasi Kebutuhan Produk Frontend
 â”œâ”€â”€ DESIGN.md                   # Sistem Desain Blue-White Light/Dark Mode
 â”œâ”€â”€ STACK.md                    # Dokumentasi Arsitektur & Kontrak Teknis
@@ -62,7 +62,7 @@ FE-ReportLoop/
     â”‚   â””â”€â”€ store.js            # -> src/context/ReportContext.jsx / Zustand store
     â”œâ”€â”€ services/               # Logika murni tanpa akses DOM (100% reusable di React)
     â”‚   â”œâ”€â”€ api.js              # -> src/services/api.js (Client REST FastAPI + Auth Header)
-    â”‚   â”œâ”€â”€ auth.js             # -> src/services/auth.js (Manajemen sesi & validasi peran)
+    â”‚   â”œâ”€â”€ auth.js             # -> src/services/auth.js (Sesi 8j/7h, Google OAuth, reset sandi, & validasi peran)
     â”‚   â”œâ”€â”€ geo.js              # -> src/utils/geo.js (Rumus Haversine radius 15m)
     â”‚   â””â”€â”€ nlp.js              # -> src/utils/nlp.js (Simulasi prediksi kategori TF-IDF/NB)
     â”œâ”€â”€ features/               # Kontroler UI per modul (setara komponen pintar React)
@@ -70,10 +70,10 @@ FE-ReportLoop/
     â”‚   â”œâ”€â”€ map.js              # Inisialisasi Leaflet, GPS Geolocation, & sinkronisasi marker
     â”‚   â”œâ”€â”€ photo.js            # Upload foto live wajib (tanpa opsi foto lama), validasi tipe/ukuran, & pratinjau kamera
     â”‚   â”œâ”€â”€ reportForm.js       # Submit laporan (blokir foto lama), deteksi duplikat 15m, upvote, & update status
-    â”‚   â”œâ”€â”€ publicBoard.js      # Filter kategori/status, pencarian, tab dukungan, & render kartu laporan umum
+    â”‚   â”œâ”€â”€ publicBoard.js      # Filter kategori/status, pencarian, tab dukungan, tracking progres admin, & kartu laporan
     â”‚   â”œâ”€â”€ adminPanel.js       # Hitung KPI riil & render antrean triase Sarpras
     â”‚   â”œâ”€â”€ duplicateModal.js   # Kontrol dialog aksesibel (Escape & Tab focus trap)
-    â”‚   â””â”€â”€ authPage.js         # Validasi form login/register Mahasiswa & Admin
+    â”‚   â””â”€â”€ authPage.js         # Validasi form login/register, Google OAuth, modal lupa sandi, & Ingat Saya
     â””â”€â”€ utils/
         â”œâ”€â”€ badges.js           # Pemetaan label & kelas warna status/kategori
         â”œâ”€â”€ escapeHtml.js       # Sanitasi string untuk mencegah XSS pada innerHTML

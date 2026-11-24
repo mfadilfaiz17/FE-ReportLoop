@@ -23,16 +23,33 @@
 
 ---
 
+## Google OAuth (Client ID Asli, Diverifikasi Backend)
+
+Tombol **Masuk/Daftar dengan Google** membaca `GOOGLE_CLIENT_ID` dari `js/config/constants.js`. Tidak ada akun Google dummy.
+
+- **Client ID kosong (default):** tombol hanya menampilkan pesan bahwa Google belum dikonfigurasi.
+- **Client ID terisi:** aplikasi memuat Google Identity Services resmi dan tombol Google asli tampil. Token ID dikirim ke `POST /api/auth/google` dan wajib diverifikasi backend. Panduan backend ada di `BACKEND-GOOGLE-AUTH.md`.
+
+Cara menghubungkan Client ID asli: buat OAuth Client ID (tipe *Web application*) di Google Cloud Console, tambahkan alamat server lokal Anda (misalnya `http://localhost:5500`) ke *Authorized JavaScript origins*, lalu jalankan di console browser dan muat ulang halaman:
+
+```js
+localStorage.setItem('reportloop.googleClientId', '<CLIENT_ID>.apps.googleusercontent.com');
+```
+
+Untuk melepas Client ID: `localStorage.removeItem('reportloop.googleClientId')`.
+
+---
+
 ## Akun & Cara Masuk (Mode Demo)
 
 Akun disimpan secara lokal di `localStorage` browser masing-masing.
 
 - **Mahasiswa (Pelapor)**
-  1. Daftar di `html/daftar.html` menggunakan **NIM (6â€“12 digit)** dan kata sandi (min. 8 karakter).
-  2. Masuk melalui `html/masuk.html` untuk mengakses `html/user.html`.
+  1. Daftar di `html/daftar.html` menggunakan **NIM (6â€“12 digit)**, **Email Google umum** (`@gmail.com`), dan kata sandi (min. 8 karakter), atau gunakan tombol **Daftar dengan Google** (OAuth).
+  2. Masuk melalui `html/masuk.html` (via NIM + sandi atau **Masuk dengan Google**), dengan opsi **Ingat saya di perangkat ini** (sesi 7 hari) dan **Lupa kata sandi?** untuk mengakses `html/user.html`.
 - **Admin Sarpras (Pengelola)**
-  1. Daftar di `html/admin-daftar.html` menggunakan **Email**, kata sandi (min. 8 karakter), dan kode undangan demo (diberikan terpisah oleh tim pengembang, tidak ditulis di repo).
-  2. Masuk melalui `html/admin-masuk.html` untuk mengakses panel triase `html/admin.html`.
+  1. Daftar di `html/admin-daftar.html` menggunakan **Email Google**, kata sandi (min. 8 karakter), dan kode undangan demo (diberikan terpisah oleh tim pengembang, tidak ditulis di repo), atau gunakan tombol **Daftar dengan Google** + kode undangan.
+  2. Masuk melalui `html/admin-masuk.html` (via email atau **Masuk dengan Google**), dilengkapi opsi **Ingat saya** (7 hari) dan **Lupa kata sandi?** untuk mengakses panel triase `html/admin.html`.
 
 ---
 
@@ -62,7 +79,7 @@ FE-ReportLoop/
 ## Status Fitur (Prototype vs. Target Production)
 
 **Sudah tersedia di prototype (Semifinal):**
-- Autentikasi terpisah Mahasiswa (NIM) dan Admin Sarpras (Email + kode undangan).
+- Autentikasi terpisah Mahasiswa (NIM + Email Google) dan Admin Sarpras (Email Google + kode undangan), dilengkapi **Google OAuth**, **Lupa kata sandi**, dan opsi **Ingat saya (7 hari)**.
 - Peta interaktif kampus Polindra (Leaflet.js) dengan *draggable marker* dan status pin.
 - Form pelaporan + pratinjau kategori NLP otomatis (*Infrastructure*, *Cleanliness*, *Security*).
 - Validasi foto bukti dan deteksi laporan duplikat dalam radius 15 meter.

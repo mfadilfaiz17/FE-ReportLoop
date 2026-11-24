@@ -18,6 +18,19 @@ function resolveApiBase() {
 export const FASTAPI_BASE_URL = resolveApiBase();
 export const IS_LOCAL_HOST = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 
+// Konfigurasi Google OAuth 2.0 (Google Identity Services)
+// Bisa diisi melalui: localStorage.setItem('reportloop.googleClientId', '<CLIENT_ID>.apps.googleusercontent.com')
+function resolveGoogleClientId() {
+  try {
+    const custom = localStorage.getItem('reportloop.googleClientId');
+    if (custom && custom.trim()) return custom.trim();
+  } catch (_) {
+    /* penyimpanan tidak tersedia */
+  }
+  return '';
+}
+export const GOOGLE_CLIENT_ID = resolveGoogleClientId();
+
 // Batas area geofencing kampus Politeknik Negeri Indramayu
 export const CAMPUS_BOUNDARY = [
   [-6.4071, 108.2801],

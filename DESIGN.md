@@ -16,7 +16,7 @@ Komposisi visual pada referensi gambar diterapkan secara fungsional untuk kebutu
 2. **Ritme Section Bervariasi (`RHYTHM 2`):**
    * **Bar Alur 3 Langkah Inti:** Ikon Heroicons berbingkai tipis di atas label ringkas (*1. Sematkan Titik Peta*, *2. Klasifikasi Otomatis NLP*, *3. Triase & Upvote Kolektif*).
    * **Section Split Tentang Sistem & Alur:** Penjelasan peran ganda (Mahasiswa Pelapor & Admin Sarpras) dengan daftar poin berikon centang dan pratinjau ringkasan status.
-   * **Papan Laporan Publik Langsung (*Live Public Preview*):** Menampilkan kartu laporan nyata dari data aplikasi (bukan mockup statis).
+   * **Papan Laporan Publik Langsung (*Live Public Preview*):** Menampilkan kartu laporan nyata dari data aplikasi (bukan mockup statis), lengkap dengan indikator tahapan progres pengerjaan admin (`Diterima`, `Diperbaiki`, `Selesai`).
    * **Banner Aksi Penutup (*Callout Card*):** Kartu biru solid berujung membulat (`rounded-2xl`) di bagian bawah untuk ajakan langsung masuk/membuat laporan sebagai Mahasiswa.
 3. **Penyesuaian Kejujuran Data (Aturan Anti-Slop R-17 & R-18):**
    * Elemen statistik karangan pada referensi gambar (seperti `120+ Clients`, `250+ Projects`, `8+ Years`) **tidak digunakan**. Angka yang ditampilkan di ReportLoop hanya berasal dari hitungan data laporan nyata (jumlah laporan diterima, diproses, selesai, dan jumlah dukungan).
@@ -119,4 +119,4 @@ Seluruh tampilan wajib tetap fungsional, nyaman disentuh, dan bebas *horizontal 
   * Tab papan laporan (`.tab`) menggunakan padding kompak (`0.5rem 0.625rem`, `0.8125rem`) dengan wadah gulir horizontal opsional agar seluruh tab tetap terbaca jelas pada layar `320px-360px`.
   * Kartu ringkasan KPI pada panel admin (`view-admin.html`) memakai garis pemisah vertikal internal pada kolom ganjil (`border-r`) serta skala angka `text-2xl sm:text-3xl`.
 * **Posisi Toast Aman Layar Sempit (`html/header.html`):** Kontainer `#toast-container` memakai jangkar `left-3 right-3 bottom-4` pada layar `< 640px` dan `sm:right-5 sm:bottom-5 sm:max-w-sm` pada layar lebih besar agar notifikasi tidak pernah terpotong di tepi kiri layar.
-* **Teks Singkat & Mudah Dipindai:** Gunakan kalimat maksimal 1â€“2 baris pada deskripsi hero, kartu alur, hint form, dan panel antrean agar tampilan bersih, modern, dan cepat dibaca.
+* **Komponen Pelacakan Progres Admin (User View):** Ditampilkan ringkas di dalam kartu laporan (`publicBoard.js`) dan daftar laporan pada halaman Profil (`profile.js`) menggunakan 3 tahap berurutan (`Diterima` -> `Diperbaiki` -> `Selesai`) dengan warna status yang sudah ditetapkan, garis penghubung netral (`1px solid var(--border)` atau aksen biru merek pada tahap aktif/selesai), radius `8px` pada blok rincian riwayat, serta tanpa animasi berulang atau badge hiasan berlebihan. Jika `status_history` kosong, tampilkan status berjalan secara jujur tanpa mengarang riwayat palsu.

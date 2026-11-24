@@ -145,6 +145,65 @@ export function renderPublicBoard() {
   grid.innerHTML = filtered.map((rep) => renderReportCard(rep, maxUpvotes)).join('');
 }
 
+const TRACK_STEPS = [
+  { key: 'Received', label: '1. Diterima' },
+  { key: 'In Progress', label: '2. Diperbaiki' },
+  { key: 'Resolved', label: '3. Selesai' },
+];
+
+function stepIndexForStatus(status) {
+  if (status === 'Resolved') return 2;
+  if (status === 'In Progress') return 1;
+  return 0;
+}
+
+function formatTrackDate(value) {
+  const t = Date.parse(value);
+  if (!Number.isFinite(t)) return '';
+  return new Date(t).toLocaleString('id-ID', {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function renderAdminTracking(rep) {
+  const activeIdx = stepIndexForStatus(rep.status);
+  const stepsHtml = TRACK_STEPS.map((st, idx) => {
+    const cls = idx < activeIdx ? 'track-step is-done' : idx === activeIdx ? 'track-step is-current' : 'track-step';
+    return `
+      <div class="${cls}">
+        <div class="track-bar" aria-hidden="true"></div>
+        <span class="track-label">${escapeHtml(st.label)}</span>
+      </div>
+    `;
+  }).join('');
+
+  const history = Array.isArray(rep.status_history) ? rep.status_history.slice(-2).reverse() : [];
+  const historyHtml = history.length > 0
+    ? `<ul class="mt-2 space-y-1 border-t border-ink-200 dark:border-ink-800 pt-2 text-xs text-ink-600 dark:text-ink-300">
+        ${history.map((h) => {
+          const toLabel = STATUS_LABEL[h.to] || h.to;
+          const actor = h.by || 'Petugas Sarpras';
+          const when = formatTrackDate(h.at);
+          return `<li>Status ke <strong>${escapeHtml(toLabel)}</strong> oleh ${escapeHtml(actor)}${when ? ` (${escapeHtml(when)})` : ''}</li>`;
+        }).join('')}
+      </ul>`
+    : `<p class="mt-2 border-t border-ink-200 dark:border-ink-800 pt-2 text-xs text-ink-600 dark:text-ink-300">Menunggu antrean tindakan Admin Sarpras.</p>`;
+
+  return `
+    <div class="track-box" aria-label="Progres pengerjaan admin">
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <span class="text-xs font-bold text-ink-900 dark:text-white">Progres admin</span>
+        <span class="text-xs font-semibold text-ink-600 dark:text-ink-300">${escapeHtml(STATUS_LABEL[rep.status] || rep.status)}</span>
+      </div>
+      <div class="track-steps">${stepsHtml}</div>
+      ${historyHtml}
+    </div>
+  `;
+}
+
 function renderReportCard(rep, maxUpvotes) {
   const isUpvoted = state.upvotedIds.has(rep.id);
   const formattedDate = new Date(rep.created_at).toLocaleString('id-ID', {
@@ -187,6 +246,8 @@ function renderReportCard(rep, maxUpvotes) {
           <span class="font-mono">#${escapeHtml(String(rep.id).slice(0, 8))}</span>
           <span>${formattedDate}</span>
         </div>
+
+        ${renderAdminTracking(rep)}
 
         <div class="border-t border-ink-200 dark:border-ink-800 pt-3">
           <div class="flex items-center justify-between text-sm font-semibold text-ink-900 dark:text-white">

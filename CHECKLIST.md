@@ -7,6 +7,7 @@
 
 ## Bagian 0: Sudah Selesai Direvisi
 
+- [x] **Email Google, Google OAuth, Lupa Kata Sandi & Ingat Saya (7 Hari):** Menambahkan field email Google umum pada registrasi & profil mahasiswa, tombol *Masuk/Daftar dengan Google* (memakai Google Identity Services SDK resmi; token ID diverifikasi backend, tanpa akun dummy), dialog pemulihan kata sandi, serta checkbox *Ingat saya di perangkat ini* (memperpanjang sesi dari 8 jam menjadi 7 hari) pada `masuk.html`, `daftar.html`, `admin-masuk.html`, `admin-daftar.html`, `authPage.js`, `auth.js`, dan `profile.js`.
 - [x] **Dokumen Spesifikasi & Desain:** Menyusun dan memperbarui `PRD.md`, `DESIGN.md`, dan `STACK.md` sesuai alur Semifinal vs. Final Day serta feedback terbaru (isolasi portal Sarpras, foto live wajib, profil khusus laporan user, palet *soft-white*, dan prinsip teks ringkas Clean UI).
 - [x] **Token Warna Light & Dark Mode:** Menambahkan variabel warna dasar pada `css/base.css` serta penyesuaian peta gelap pada `css/map.css`.
 - [x] **Pengelola Tema & Konfigurasi Tailwind:** Membuat `js/utils/theme.js` (Heroicons Matahari/Bulan + `localStorage`) dan `js/config/tailwind.config.js` (`darkMode: 'class'`).
@@ -47,7 +48,9 @@
   - [x] Memastikan saat membuka **Buka Papan Laporan** dari bagian **Profil**, daftar yang ditampilkan khusus berisi laporan milik user yang sedang login (difilter berdasarkan `user_id` / NIM pelapor).
   - [x] Memastikan laporan umum dari seluruh mahasiswa hanya tampil pada tab/halaman **Papan Laporan** utama (`js/features/publicBoard.js`).
 
-### Step 5: Pembaruan Landing Page (`index.html`), Peta GPS & Pembersihan File
+### Step 5: Pembaruan Landing Page (`index.html`), Peta GPS, Tracking Progres Admin & Pembersihan File
+â€‹- [x] **5.0 Pembaruan Dokumen `.md` untuk Fitur Tracking Admin:** Memperbarui `PRD.md`, `DESIGN.md`, dan `STACK.md` untuk mencatat alur pelacakan progres pengerjaan admin (`Diterima` -> `Diperbaiki` -> `Selesai`), riwayat status (`status_history`), dan aturan tampilan yang konsisten.
+â€‹- [x] **5.0b Implementasi Fitur Tracking Pengerjaan Admin (User View):** Menambahkan indikator 3 tahap progres dan rincian riwayat status pada tampilan user (`publicBoard.js`, `profile.js`, dan `css/base.css`) sesuai panduan `DESIGN.md` dan `PRD.md`.
 - [ ] **5.1 Pembaruan Halaman Utama (`index.html`):**
   - [ ] Mengganti *auto-redirect* langsung ke `masuk.html` menjadi halaman depan bergaya split-hero (`DESIGN.md`) dengan tombol masuk khusus Mahasiswa, alur 3 langkah berikon Heroicons, pratinjau papan laporan publik nyata (`SEED_REPORTS`), dan toggle Light/Dark Mode.
 - [ ] **5.2 Fitur Geolocation GPS Perangkat (`js/features/map.js` & `html/view-mahasiswa.html`):**
@@ -63,6 +66,13 @@
   - [ ] Menguji penolakan foto lama (`HTTP 400 STALE_PHOTO_REJECTED`) agar tidak bisa dikirim.
   - [ ] Menguji deteksi laporan duplikat radius 15 meter (`HTTP 409 DUPLICATE_NEARBY_REPORT`).
   - [ ] Menguji fitur `+1 Upvote` dan pembaruan status Admin (`Received` -> `In Progress` -> `Resolved`).
+- [ ] **6.3 Persiapan Backend Google OAuth (detail lengkap di `BACKEND-GOOGLE-AUTH.md`):**
+  - [ ] Membuat OAuth Client ID (Web application) di Google Cloud Console dan mendaftarkan origin frontend; Client ID yang sama dipakai FE dan BE.
+  - [ ] Mengimplementasikan `POST /api/auth/google`: verifikasi token ID ke Google, cek `email_verified`, cari atau buat akun, lalu kembalikan `{ id, email, name, token }`.
+  - [ ] Mengembalikan kode error `NIM_REQUIRED` / `INVITE_REQUIRED` (status `422`) untuk akun baru agar modal lengkapi verifikasi di FE muncul.
+  - [ ] Menyimpan `ADMIN_INVITE_CODE` dan `JWT_SECRET` di `.env` server, serta mengaktifkan CORS untuk origin frontend.
+  - [ ] Memastikan `PATCH /api/reports/{id}/status` menolak token non-admin dengan `403`.
+  - [ ] Mengisi `reportloop.apiBase` dan `reportloop.googleClientId` (atau nilai default di `constants.js` untuk production), lalu menjalankan daftar uji di bagian 7 `BACKEND-GOOGLE-AUTH.md`.
 
 ### Step 7: Aset Proposal Semifinal, Migrasi React & Fitur Final Day
 - [ ] **7.1 Dokumentasi & Aset Proposal Semifinal (Target: Sebelum 30 November 2026):**

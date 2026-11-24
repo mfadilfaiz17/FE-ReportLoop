@@ -34,11 +34,11 @@
 Mengacu pada aturan **STACK 2026**, aplikasi Semifinal wajib berjalan utuh untuk alur inti (*Early Prototype*), namun harus menyisakan 2â€“3 tugas substantif untuk dikerjakan langsung saat **Build Session Final Day (16 Desember 2026)**.
 
 ### 3.1 Cakupan Wajib Semifinal (Deadline: 30 November 2026)
-* **FR-01 Autentikasi Peran & Isolasi Portal Sarpras (CIA):** Halaman masuk & daftar terpisah untuk Mahasiswa (berbasis NIM) dan Admin Sarpras (berbasis Email + Kode Undangan). Portal masuk Admin Sarpras (`admin-masuk.html` / subdomain terpisah di produksi) diisolasi dan tidak ditautkan di UI publik (`index.html`) maupun halaman Mahasiswa untuk meminimalkan permukaan serangan dan menjaga aspek keamanan CIA (*Confidentiality, Integrity, Availability*).
+* **FR-01 Autentikasi Peran, Google OAuth & Isolasi Portal Sarpras (CIA):** Halaman masuk & daftar terpisah untuk Mahasiswa (berbasis NIM + Email Google umum, atau *Masuk/Daftar dengan Google* OAuth) dan Admin Sarpras (berbasis Email Google + Kode Undangan, atau Google OAuth dengan verifikasi kode undangan). Dilengkapi fitur **Lupa kata sandi** serta opsi **Ingat saya di perangkat ini** yang memperpanjang masa berlaku sesi dari 8 jam menjadi 7 hari. Portal masuk Admin Sarpras (`admin-masuk.html` / subdomain terpisah di produksi) diisolasi dan tidak ditautkan di UI publik (`index.html`) maupun halaman Mahasiswa untuk meminimalkan permukaan serangan dan menjaga aspek keamanan CIA (*Confidentiality, Integrity, Availability*).
 * **FR-02 Peta Interaktif Kampus (Leaflet.js):** Menampilkan area geofencing kampus Politeknik Negeri Indramayu, pin laporan aktif berdasarkan warna status, pin target laporan baru yang dapat diklik/digeser, preset titik cepat kampus, serta tombol lokasi GPS perangkat.
 * **FR-03 Form Pelaporan (Foto Live Wajib) & Pratinjau NLP Real-Time:** Input judul, deskripsi, koordinat otomatis dari peta, unggah foto bukti **live** langsung dari kamera (`capture="environment"`) tanpa opsi pilihan foto lama, serta pratinjau kategori otomatis (*Infrastructure*, *Cleanliness*, *Security*). Foto yang terdeteksi sebagai foto lama (> 24 jam) ditolak sistem sehingga tidak dapat dikirim.
 * **FR-04 Pencegahan Laporan Duplikat (Radius 15 Meter):** Mendeteksi laporan aktif berkategori sama dalam jarak <= 15 meter (Haversine di mode demo / PostGIS `ST_DWithin` di mode live) dan menampilkan modal konfirmasi untuk mengalihkan pengguna ke tombol `+1 Upvote` atau mengirim paksa (`force_submit=true`).
-* **FR-05 Papan Laporan Publik, Profil Laporan Saya & Upvote:** Papan Laporan utama menampilkan seluruh laporan umum dengan pencarian kata kunci, filter kategori, filter status, pengurutan (dukungan terbanyak / terbaru), tab *Semua laporan* vs *Dukungan saya*, serta tombol *Upvote* idempoten (1 dukungan per pengguna per laporan). Khusus pada bagian **Profil**, aksi *Buka Papan Laporan* hanya menampilkan daftar laporan milik pengguna tersebut (bukan laporan umum).
+* **FR-05 Papan Laporan Publik, Profil Laporan Saya, Tracking Progres & Upvote:** Papan Laporan utama menampilkan seluruh laporan umum dengan pencarian kata kunci, filter kategori, filter status, pengurutan (dukungan terbanyak / terbaru), tab *Semua laporan* vs *Laporan saya* vs *Dukungan saya*, serta tombol *Upvote* idempoten (1 dukungan per pengguna per laporan). Setiap kartu laporan di Papan Laporan maupun daftar laporan di Profil menampilkan **Pelacakan Pengerjaan Admin** (*3-step progress tracker*: `Diterima` -> `Diperbaiki` -> `Selesai`) beserta rincian riwayat pembaruan status (`status_history`: waktu & petugas penindak lanjut) yang jujur sesuai data nyata. Khusus pada bagian **Profil**, aksi *Buka Papan Laporan* hanya menampilkan daftar laporan milik pengguna tersebut (bukan laporan umum).
 * **FR-06 Panel Triase Admin Sarpras:** Ringkasan KPI riil dari jumlah laporan, antrean laporan terurut berdasarkan dukungan tertinggi, filter divisi & status, tombol aksi perubahan status bertahap, dan tombol *Lihat peta* yang memusatkan peta ke titik laporan.
 * **FR-07 Tema Terang (Soft-White) & Gelap (Light / Dark Mode):** Pengalih tema biru-putih lembut (*soft-white*, tidak terlalu putih agar tidak menyilaukan) dan biru-slate gelap dengan kontras ramah bagi mahasiswa bermata minus maupun petugas Sarpras senior, tersimpan di `localStorage` serta menghormati preferensi sistem.
 
@@ -66,7 +66,7 @@ Fitur berikut **tidak boleh** diklaim selesai pada demo/proposal Semifinal:
 1. Petugas Sarpras mengakses portal login terpisah secara langsung melalui `admin-masuk.html` (atau domain khusus Sarpras di produksi, terpisah dari UI publik/mahasiswa) dan diarahkan ke `admin.html`.
 2. Admin melihat ringkasan jumlah laporan (`Semua`, `Menunggu ditangani`, `Sedang diperbaiki`, `Selesai`) dan antrean yang otomatis diurutkan berdasarkan jumlah dukungan terbanyak.
 3. Admin dapat memfilter berdasarkan kategori divisi NLP (`Infrastructure`, `Cleanliness`, `Security`) atau status, lalu mengklik **Lihat peta** untuk memeriksa lokasi tepat kerusakan.
-4. Admin menekan **Mulai perbaikan** (`Received` -> `In Progress`) atau **Tandai selesai** (`In Progress` -> `Resolved`). Perubahan langsung diperbarui pada papan publik dan warna pin peta.
+4. Admin menekan **Mulai perbaikan** (`Received` -> `In Progress`) atau **Tandai selesai** (`In Progress` -> `Resolved`). Perubahan langsung diperbarui pada papan publik, warna pin peta, serta tercatat dalam riwayat `status_history` agar mahasiswa dapat melacak progres pengerjaan secara transparan.
 
 ---
 
@@ -95,7 +95,15 @@ Dokumen ini menjadi acuan sinkronisasi antara **Frontend** dan **Backend (Ibrahi
   "nlp_confidence": 0.91,
   "status": "In Progress",
   "upvotes": 14,
-  "created_at": "2026-11-22T08:15:00+07:00"
+  "created_at": "2026-11-22T08:15:00+07:00",
+  "status_history": [
+    {
+      "from": "Received",
+      "to": "In Progress",
+      "by": "Petugas Sarpras",
+      "at": "2026-11-23T09:00:00+07:00"
+    }
+  ]
 }
 ```
 
