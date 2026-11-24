@@ -59,6 +59,19 @@ export async function postUpvote(reportId) {
   }
 }
 
+export async function deleteUpvote(reportId) {
+  try {
+    const res = await fetch(`${FASTAPI_BASE_URL}/api/reports/${reportId}/upvote`, {
+      method: 'DELETE',
+      headers: buildAuthHeaders(),
+    });
+    const data = await res.json().catch(() => null);
+    return { ok: res.ok, status: res.status, data };
+  } catch (_) {
+    return null;
+  }
+}
+
 export async function patchReportStatus(reportId, status) {
   try {
     const res = await fetch(`${FASTAPI_BASE_URL}/api/reports/${reportId}/status`, {

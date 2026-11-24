@@ -266,9 +266,9 @@ function renderReportCard(rep, maxUpvotes) {
           data-action="upvote"
           data-id="${escapeHtml(rep.id)}"
           aria-pressed="${isUpvoted}"
-          aria-label="${isUpvoted ? 'Anda sudah mendukung' : 'Dukung'} laporan ${escapeHtml(rep.title)}, ${rep.upvotes} dukungan"
+          aria-label="${isUpvoted ? 'Batalkan dukungan' : 'Dukung'} laporan ${escapeHtml(rep.title)}, ${rep.upvotes} dukungan"
           class="btn w-full ${isUpvoted ? 'btn-primary' : 'btn-ghost'}"
-        >${isUpvoted ? 'Sudah Anda dukung' : 'Dukung laporan ini'}</button>
+        >${isUpvoted ? 'Batalkan dukungan' : 'Dukung laporan ini'}</button>
       </div>
     </article>
   `;

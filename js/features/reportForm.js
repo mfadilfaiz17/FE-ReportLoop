@@ -10,7 +10,7 @@ import { DUPLICATE_RADIUS_METERS, CAMPUS_BOUNDARY } from '../config/constants.js
 import { state } from '../state/store.js';
 import { predictNlpCategory } from '../services/nlp.js';
 import { haversineDistanceMeters, isPointInPolygon } from '../services/geo.js';
-import { postReport, postUpvote, patchReportStatus } from '../services/api.js';
+import { postReport, postUpvote, deleteUpvote, patchReportStatus } from '../services/api.js';
 import { getSession } from '../services/auth.js';
 import { showToast } from '../utils/toast.js';
 import { getCategoryBadgeClass, CATEGORY_LABEL } from '../utils/badges.js';
@@ -58,7 +58,7 @@ function resetReportForm() {
 function openDuplicate(existing, distance, payload, renderAll) {
   openDuplicateModal(existing, distance, payload, {
     onUpvote: async (id) => {
-      if (await upvoteReport(id, renderAll)) resetReportForm();
+      if (await upvoteReport(id, renderAll, { allowToggle: false })) resetReportForm();
     },
     onForceSubmit: (saved) => forceSubmitReport(saved, renderAll),
   });
@@ -279,13 +279,14 @@ export async function handleReportSubmit(event, renderAll) {
 
 const pendingUpvotes = new Set();
 
-// Mengembalikan true hanya bila dukungan baru tercatat.
-export async function upvoteReport(reportId, renderAll) {
+// Mengembalikan true bila dukungan ditambahkan atau dibatalkan.
+export async function upvoteReport(reportId, renderAll, { allowToggle = true } = {}) {
   const target = state.reports.find((r) => String(r.id) === String(reportId));
   const key = target ? target.id : reportId;
   const pendingKey = String(reportId);
+  const alreadyUpvoted = state.upvotedIds.has(key);
 
-  if (state.upvotedIds.has(key)) {
+  if (alreadyUpvoted && !allowToggle) {
     showToast('Anda sudah mendukung laporan ini.', 'info');
     return false;
   }
@@ -294,6 +295,34 @@ export async function upvoteReport(reportId, renderAll) {
 
   pendingUpvotes.add(pendingKey);
   try {
+    if (alreadyUpvoted) {
+      if (state.isLiveApi) {
+        const result = await deleteUpvote(reportId);
+        if (result && result.status === 404) {
+          state.upvotedIds.delete(key);
+          renderAll();
+          showToast('Dukungan laporan ini sudah tidak aktif.', 'info');
+          return false;
+        }
+        if (!result || !result.ok) {
+          showToast('Gagal membatalkan dukungan di server FastAPI.', 'error');
+          return false;
+        }
+        if (target && result.data && typeof result.data === 'object') {
+          Object.assign(target, result.data);
+        } else if (target) {
+          target.upvotes = Math.max(0, (target.upvotes || 0) - 1);
+        }
+      } else {
+        target.upvotes = Math.max(0, (target.upvotes || 0) - 1);
+      }
+
+      state.upvotedIds.delete(key);
+      renderAll();
+      showToast(target ? `Dukungan untuk "${target.title}" dibatalkan.` : 'Dukungan dibatalkan.', 'info');
+      return true;
+    }
+
     if (state.isLiveApi) {
       const result = await postUpvote(reportId);
       if (result && result.status === 409) {
