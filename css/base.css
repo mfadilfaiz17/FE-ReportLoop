@@ -448,3 +448,176 @@ html.dark .badge-cat { background: #1e293b; color: #e2e8f0; }
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Tumpukan kartu geser (card stack swipe kiri/kanan) section 3 Langkah Pelaporan */
+.steps-stack-stage {
+  position: relative;
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+  max-width: 34rem;
+  margin-inline: auto;
+  padding: 0.25rem 0.5rem 1.35rem;
+  touch-action: pan-y;
+}
+
+@media (min-width: 768px) {
+  .steps-stack-stage {
+    max-width: 38rem;
+    padding: 0.25rem 1.5rem 1.5rem;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .steps-stack-stage {
+    cursor: grab;
+  }
+
+  .steps-stack-stage.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+}
+
+.step-card {
+  grid-area: 1 / 1;
+  position: relative;
+  width: 100%;
+  background: var(--surface);
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+  transition:
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.32s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.steps-stack-stage.is-dragging .step-card,
+.steps-track.is-dragging .step-card {
+  transition: none;
+}
+
+.steps-track.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.step-card[data-stack-pos='0'] {
+  z-index: 30;
+  opacity: 1;
+  pointer-events: auto;
+  border-color: var(--brand);
+  box-shadow: 0 14px 28px -16px rgba(15, 23, 42, 0.22);
+  transform: translate3d(var(--drag-x, 0px), 0, 0) rotate(var(--drag-rot, 0deg)) scale(1);
+}
+
+html.dark .step-card[data-stack-pos='0'] {
+  box-shadow: 0 16px 32px -16px rgba(2, 6, 23, 0.72);
+}
+
+.step-card[data-stack-pos='1'] {
+  z-index: 20;
+  opacity: 0.92;
+  pointer-events: none;
+  transform: translate3d(0, 12px, 0) scale(0.955);
+}
+
+.step-card[data-stack-pos='2'] {
+  z-index: 10;
+  opacity: 0.76;
+  pointer-events: none;
+  transform: translate3d(0, 22px, 0) scale(0.91);
+}
+
+.steps-track {
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+  outline: none;
+}
+
+.steps-track:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 6px;
+  border-radius: 1rem;
+}
+
+.step-card.is-dragging-top {
+  transition: none;
+}
+
+.step-card.is-throwing-left {
+  opacity: 0;
+  transform: translate3d(-120%, -12px, 0) rotate(-14deg);
+}
+
+.step-card.is-throwing-right {
+  opacity: 0;
+  transform: translate3d(120%, -12px, 0) rotate(14deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-card {
+    transition: none;
+  }
+}
+
+.steps-track {
+  display: grid;
+  align-items: stretch;
+  width: 100%;
+  outline: none;
+}
+
+.steps-track:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 6px;
+  border-radius: 1rem;
+}
+
+.step-card.is-dragging-top {
+  transition: none;
+}
+
+.step-card.is-throwing-left {
+  opacity: 0;
+  transform: translate3d(-120%, -12px, 0) rotate(-14deg);
+}
+
+.step-card.is-throwing-right {
+  opacity: 0;
+  transform: translate3d(120%, -12px, 0) rotate(14deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-card {
+    transition: none;
+  }
+}
+
+.step-dot-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.375rem;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.step-dot-pill {
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--line);
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease;
+}
+
+.step-dot-btn.is-active .step-dot-pill {
+  width: 1.5rem;
+  background: var(--brand);
+}
+
