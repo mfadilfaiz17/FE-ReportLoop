@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk Admin Sarpras | ReportLoop Politeknik Negeri Indramayu</title>
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('reportloop.theme');
+        var dark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../js/config/tailwind.config.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../css/base.css" />
+</head>
+<body class="min-h-screen flex flex-col" data-role="admin" data-mode="login">
+
+  <main class="flex-1 grid lg:grid-cols-2">
+    <section class="app-header px-6 py-8 sm:px-10 lg:px-14 lg:py-12 flex flex-col justify-between gap-10">
+      <div class="flex items-center justify-between gap-3">
+        <a href="../index.html" class="text-xl font-extrabold tracking-tight hover:opacity-90">ReportLoop <span class="font-semibold text-blue-100">untuk Sarpras</span></a>
+        <button type="button" data-theme-toggle aria-pressed="false" aria-label="Beralih ke mode gelap" class="lg:hidden nav-link border border-white/35 px-2.5">
+          <span data-theme-icon></span>
+        </button>
+      </div>
+
+      <div class="max-w-md">
+        <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight">
+          Antrean laporan fasilitas, diurutkan dari yang paling banyak didukung.
+        </h1>
+        <p class="mt-4 text-base text-blue-100 leading-relaxed">
+          Tinjau laporan mahasiswa, lihat lokasinya di peta, lalu ubah statusnya menjadi sedang diperbaiki atau selesai.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between gap-4 text-sm text-blue-100">
+        <span>Politeknik Negeri Indramayu</span>
+        <a href="../index.html" class="underline underline-offset-2 hover:text-white">Kembali ke Beranda</a>
+      </div>
+    </section>
+
+    <section class="relative flex items-center justify-center px-6 py-10 sm:px-10">
+      <button type="button" data-theme-toggle aria-pressed="false" aria-label="Beralih ke mode gelap" class="hidden lg:inline-flex btn btn-ghost px-3 absolute top-6 right-6">
+        <span data-theme-icon></span>
+        <span data-theme-label>Gelap</span>
+      </button>
+
+      <div class="w-full max-w-sm">
+        <h2 class="text-2xl font-extrabold text-ink-900 dark:text-white">Masuk sebagai admin Sarpras</h2>
+        <p class="mt-1 text-sm text-ink-600 dark:text-ink-300">Khusus petugas yang menangani perbaikan fasilitas.</p>
+
+        <p id="form-notice" role="status" class="hidden mt-5 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/70 px-3.5 py-3 text-sm font-semibold text-green-900 dark:text-green-200">
+          Akun admin berhasil dibuat. Silakan masuk.
+        </p>
+        <p id="form-error" role="alert" class="hidden mt-5 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/70 px-3.5 py-3 text-sm font-semibold text-red-900 dark:text-red-200"></p>
+
+        <form id="auth-form" class="mt-6 space-y-4" novalidate>
+          <div>
+            <label for="f-identifier" class="label">Email</label>
+            <input id="f-identifier" type="email" autocomplete="username" class="field" placeholder="email@example.com" aria-describedby="err-identifier" />
+            <p id="err-identifier" class="hidden error-text"></p>
+          </div>
+
+          <div>
+            <label for="f-password" class="label">Kata sandi</label>
+            <div class="relative">
+              <input id="f-password" type="password" autocomplete="current-password" class="field pr-28" aria-describedby="err-password" />
+              <button type="button" data-toggle-password="f-password" aria-pressed="false" class="absolute right-1 top-1 bottom-1 px-3 rounded-md text-sm font-semibold text-brand-700 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-ink-800">Tampilkan</button>
+            </div>
+            <p id="err-password" class="hidden error-text"></p>
+          </div>
+
+          <button id="auth-submit" type="submit" class="btn btn-primary w-full">
+            <span id="auth-submit-label">Masuk ke panel Sarpras</span>
+          </button>
+        </form>
+
+        <p class="mt-6 text-sm text-ink-600 dark:text-ink-300">
+          Belum punya akun admin?
+          <a href="admin-daftar.html" class="font-semibold text-brand-700 dark:text-brand-400 underline underline-offset-2 hover:text-brand-900 dark:hover:text-brand-300">Daftar dengan kode undangan</a>
+        </p>
+
+        <div class="mt-8 pt-5 border-t border-ink-200 dark:border-ink-800 text-sm text-ink-600 dark:text-ink-300">
+          Mahasiswa?
+          <a href="masuk.html" class="font-semibold text-brand-700 dark:text-brand-400 underline underline-offset-2 hover:text-brand-900 dark:hover:text-brand-300">Masuk dengan NIM</a>
+        </div>
+
+        <p class="mt-6 text-xs text-ink-600 dark:text-ink-400 leading-relaxed">
+          Mode demo: akun disimpan di browser ini saja sampai backend FastAPI terhubung.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="../js/features/authPage.js"></script>
+</body>
+</html>

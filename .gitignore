@@ -1,0 +1,20 @@
+# Sistem Operasi (Windows & macOS)
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor & IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Lingkungan & Konfigurasi Lokal
+.env
+.env.local
+.env.*.local
+
+# Log & File Sementara
+*.log
+*.tmp
+*.bak

@@ -1,0 +1,38 @@
+<!-- Modal konfirmasi laporan serupa dalam radius 15 meter -->
+<div
+  id="duplicate-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="dup-modal-title"
+  aria-describedby="dup-modal-message"
+  class="hidden fixed inset-0 z-50 bg-ink-950/70 flex items-center justify-center p-4"
+>
+  <div class="bg-white dark:bg-ink-900 rounded-xl max-w-md w-full border border-ink-200 dark:border-ink-800 shadow-xl overflow-hidden fade-in">
+    <div class="p-5 border-b border-ink-200 dark:border-ink-800">
+      <h3 id="dup-modal-title" class="text-lg font-extrabold text-ink-900 dark:text-white">Laporan serupa sudah ada di dekat titik ini</h3>
+      <p id="dup-modal-message" class="mt-1 text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
+        Ada laporan aktif dengan kategori yang sama dalam radius 15 meter.
+      </p>
+    </div>
+
+    <div class="p-5 space-y-4">
+      <div class="rounded-lg bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 p-3.5 space-y-2">
+        <div class="flex items-center justify-between gap-2">
+          <span id="dup-existing-cat" class="badge badge-cat"></span>
+          <span id="dup-existing-dist" class="text-xs font-mono font-semibold text-ink-700 dark:text-ink-300"></span>
+        </div>
+        <p id="dup-existing-title" class="font-bold text-sm text-ink-900 dark:text-white"></p>
+        <div class="flex items-center justify-between text-xs text-ink-600 dark:text-ink-300 pt-2 border-t border-brand-200 dark:border-brand-800">
+          <span>ID: <span id="dup-existing-id" class="font-mono"></span></span>
+          <span class="font-bold text-brand-900 dark:text-brand-300"><span id="dup-existing-upvotes">0</span> dukungan</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <button id="btn-dup-upvote" type="button" class="btn btn-primary w-full">Dukung laporan yang sudah ada</button>
+        <button id="btn-dup-force" type="button" class="btn btn-ghost w-full">Tetap kirim sebagai laporan baru</button>
+      </div>
+      <p class="hint">Tekan Esc untuk menutup tanpa mengirim.</p>
+    </div>
+  </div>
+</div>

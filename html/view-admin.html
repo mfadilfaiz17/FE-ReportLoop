@@ -1,0 +1,84 @@
+<!-- Panel Admin Sarpras: Antrean Triase, Peta Lokasi Laporan, dan Profil Petugas -->
+<section id="view-admin" class="fade-in space-y-6">
+
+  <!-- HALAMAN 1: RINGKASAN & ANTREAN TRIASE -->
+  <div id="page-antrean" data-page="antrean" class="space-y-6">
+    <div id="ringkasan" class="card">
+      <h2 class="sr-only">Ringkasan laporan</h2>
+      <dl class="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 divide-ink-200 dark:divide-ink-800 lg:divide-x">
+        <div class="p-4 sm:p-5">
+          <dt class="text-sm font-semibold text-ink-600 dark:text-ink-300">Semua laporan</dt>
+          <dd id="kpi-total" class="mt-1 text-3xl font-extrabold text-ink-900 dark:text-white font-mono">0</dd>
+        </div>
+        <div class="p-4 sm:p-5">
+          <dt class="text-sm font-semibold text-ink-600 dark:text-ink-300">Menunggu ditangani</dt>
+          <dd id="kpi-received" class="mt-1 text-3xl font-extrabold text-amber-700 dark:text-amber-300 font-mono">0</dd>
+        </div>
+        <div class="p-4 sm:p-5">
+          <dt class="text-sm font-semibold text-ink-600 dark:text-ink-300">Sedang diperbaiki</dt>
+          <dd id="kpi-progress" class="mt-1 text-3xl font-extrabold text-brand-700 dark:text-brand-400 font-mono">0</dd>
+        </div>
+        <div class="p-4 sm:p-5">
+          <dt class="text-sm font-semibold text-ink-600 dark:text-ink-300">Selesai</dt>
+          <dd id="kpi-resolved" class="mt-1 text-3xl font-extrabold text-green-700 dark:text-green-400 font-mono">0</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div id="antrean" class="card overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-ink-200 dark:border-ink-800">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1 class="text-xl font-extrabold text-ink-900 dark:text-white">Antrean laporan Sarpras</h1>
+            <p id="queue-summary" class="text-sm text-ink-600 dark:text-ink-300" aria-live="polite"></p>
+          </div>
+          <button type="button" data-nav-view="peta" class="btn btn-sm btn-ghost shrink-0">Lihat Peta Kampus</button>
+        </div>
+        <p class="hint">Diurutkan dari laporan dengan dukungan terbanyak agar fasilitas yang paling mendesak ditangani lebih dulu.</p>
+
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:max-w-xl">
+          <div>
+            <label for="admin-filter-category" class="label">Kategori</label>
+            <select id="admin-filter-category" class="field">
+              <option value="ALL">Semua kategori</option>
+              <option value="Infrastructure">Infrastruktur</option>
+              <option value="Cleanliness">Kebersihan</option>
+              <option value="Security">Keamanan</option>
+            </select>
+          </div>
+          <div>
+            <label for="admin-filter-status" class="label">Status</label>
+            <select id="admin-filter-status" class="field">
+              <option value="ALL">Semua status</option>
+              <option value="Received">Diterima</option>
+              <option value="In Progress">Diperbaiki</option>
+              <option value="Resolved">Selesai</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="admin-queue" class="divide-y divide-ink-200 dark:divide-ink-800"></div>
+    </div>
+  </div>
+
+  <!-- HALAMAN 2: PETA LOKASI LAPORAN -->
+  <div id="page-peta" data-page="peta" class="hidden card p-4 sm:p-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div>
+        <h1 class="text-xl font-extrabold text-ink-900 dark:text-white">Peta lokasi laporan kampus</h1>
+        <p class="hint">Klik pin status pada peta untuk melihat detail laporan atau kembali ke antrean triase.</p>
+      </div>
+      <button type="button" data-nav-view="antrean" class="btn btn-sm btn-ghost shrink-0">Kembali ke Antrean</button>
+    </div>
+    <div class="relative mt-4 rounded-lg border border-ink-200 dark:border-ink-800 overflow-hidden bg-ink-100 dark:bg-ink-900">
+      <div id="campus-map" role="region" aria-label="Peta lokasi laporan fasilitas kampus"></div>
+    </div>
+  </div>
+
+  <!-- HALAMAN 3: PROFIL ADMIN SARPRAS -->
+  <div id="page-profil" data-page="profil" class="hidden">
+    <div id="profile-container"></div>
+  </div>
+
+</section>
