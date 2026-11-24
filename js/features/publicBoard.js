@@ -180,15 +180,13 @@ function renderAdminTracking(rep) {
     `;
   }).join('');
 
-  const history = Array.isArray(rep.status_history) ? rep.status_history.slice(-2).reverse() : [];
-  const historyHtml = history.length > 0
-    ? `<ul class="mt-2 space-y-1 border-t border-ink-200 dark:border-ink-800 pt-2 text-xs text-ink-600 dark:text-ink-300">
-        ${history.map((h) => {
-          const toLabel = STATUS_LABEL[h.to] || h.to;
-          const when = formatTrackDate(h.at);
-          return `<li>Status ke <strong>${escapeHtml(toLabel)}</strong> oleh Admin${when ? ` (${escapeHtml(when)})` : ''}</li>`;
-        }).join('')}
-      </ul>`
+  const latest = Array.isArray(rep.status_history) && rep.status_history.length > 0
+    ? rep.status_history[rep.status_history.length - 1]
+    : null;
+  const latestToLabel = latest ? (STATUS_LABEL[latest.to] || latest.to) : '';
+  const latestWhen = latest ? formatTrackDate(latest.at) : '';
+  const historyHtml = latest
+    ? `<p class="mt-2 border-t border-ink-200 dark:border-ink-800 pt-2 text-xs text-ink-600 dark:text-ink-300">Status ke <strong>${escapeHtml(latestToLabel)}</strong> oleh Admin${latestWhen ? ` (${escapeHtml(latestWhen)})` : ''}</p>`
     : '';
 
   return `
