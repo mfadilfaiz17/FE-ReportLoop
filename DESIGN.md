@@ -92,6 +92,9 @@ Untuk menjaga performa tetap ringan tanpa *bundler* pada tahap Vanilla sebelum m
 3. **Scroll Reveal Engine (`IntersectionObserver` Native):**
    * Menggunakan `IntersectionObserver` ringan (`js/utils/scrollReveal.js`) untuk memunculkan section dan kartu secara halus saat digulir (`opacity: 0 -> 1`, `translateY: 14px -> 0`, durasi `350ms`).
    * Otomatis dinonaktifkan jika sistem pengguna mengaktifkan `prefers-reduced-motion: reduce`.
+4. **Transisi Tema Radial (`View Transitions API`):**
+   * Pergantian tema Terang/Gelap (`js/utils/theme.js` + `css/base.css`) memancarkan animasi `clip-path: circle()` secara halus (`460ms`, `cubic-bezier(0.22, 1, 0.36, 1)`) dari titik tengah tombol pengalih tema (`[data-theme-toggle]`) ke seluruh sudut viewport.
+   * Secara otomatis jatuh kembali (*fallback*) ke pergantian instan apabila browser belum mendukung `document.startViewTransition` atau pengguna mengaktifkan `prefers-reduced-motion: reduce`.
 
 ---
 

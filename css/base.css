@@ -42,6 +42,28 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Animasi menyebar radial (View Transitions API) saat pergantian tema */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
 .font-mono,
 code,
 pre,

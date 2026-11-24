@@ -37,9 +37,66 @@ export function applyTheme(theme) {
   });
 }
 
-export function toggleTheme() {
+export function toggleTheme(event) {
   const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-  applyTheme(next);
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!document.startViewTransition || reduceMotion) {
+    applyTheme(next);
+    return next;
+  }
+
+  const trigger = event?.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+  let x = window.innerWidth / 2;
+  let y = window.innerHeight / 2;
+
+  if (trigger) {
+    const rect = trigger.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    }
+  } else if (event && typeof event.clientX === 'number' && typeof event.clientY === 'number') {
+    x = event.clientX;
+    y = event.clientY;
+  }
+
+  const endRadius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y)
+  );
+
+  const root = document.documentElement;
+  root.classList.add('theme-transitioning');
+
+  const transition = document.startViewTransition(() => {
+    applyTheme(next);
+  });
+
+  transition.ready
+    .then(() => {
+      root.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 650,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      );
+    })
+    .catch(() => {
+      // Fallback aman bila transisi dibatalkan
+    });
+
+  transition.finished.finally(() => {
+    root.classList.remove('theme-transitioning');
+  });
+
   return next;
 }
 

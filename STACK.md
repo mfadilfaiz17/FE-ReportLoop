@@ -78,7 +78,7 @@ FE-ReportLoop/
         â”œâ”€â”€ badges.js           # Pemetaan label & kelas warna status/kategori
         â”œâ”€â”€ escapeHtml.js       # Sanitasi string untuk mencegah XSS pada innerHTML
         â”œâ”€â”€ scrollReveal.js     # Efek kemunculan halus berbasis IntersectionObserver
-        â”œâ”€â”€ theme.js            # Pengelola tema Light/Dark (localStorage + prefers-color-scheme)
+        â”œâ”€â”€ theme.js            # Pengelola tema Light/Dark + efek transisi radial dari tombol toggle (localStorage + prefers-color-scheme)
         â””â”€â”€ toast.js            # Notifikasi umpan balik aksi pengguna
 ```
 
