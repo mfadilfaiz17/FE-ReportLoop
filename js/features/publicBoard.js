@@ -2,6 +2,7 @@
 
 import { FASTAPI_BASE_URL } from '../config/constants.js';
 import { state } from '../state/store.js';
+import { getSession } from '../services/auth.js';
 import { escapeHtml } from '../utils/escapeHtml.js';
 import {
   getCategoryBadgeClass,
@@ -21,12 +22,18 @@ export function setFilterCategory(cat) {
   renderPublicBoard();
 }
 
-function setScope(next) {
+export function setScope(next) {
   scope = next;
   document.querySelectorAll('[data-scope]').forEach((tab) => {
     tab.setAttribute('aria-selected', String(tab.dataset.scope === next));
   });
   renderPublicBoard();
+}
+
+function isUserReport(rep, session) {
+  if (!session || !session.id) return false;
+  const ownerId = rep.user_id ?? rep.reporter_nim ?? rep.nim ?? null;
+  return ownerId !== null && String(ownerId) === String(session.id);
 }
 
 function supportPercent(rep, maxUpvotes) {
@@ -39,6 +46,12 @@ function emptyMessage() {
     return {
       title: 'Belum ada laporan di kampus',
       body: 'Jadilah yang pertama: pilih lokasi di peta, isi formulir, lalu kirim laporan.',
+    };
+  }
+  if (scope === 'user') {
+    return {
+      title: 'Anda belum mengirim laporan',
+      body: 'Buka Peta & Lapor untuk melaporkan kondisi fasilitas kampus.',
     };
   }
   if (scope === 'mine') {
@@ -88,12 +101,18 @@ export function renderPublicBoard() {
   if (!grid) return;
   grid.removeAttribute('aria-busy');
 
+  const session = getSession();
   const statusFilter = document.getElementById('filter-status').value;
   const sortBy = document.getElementById('sort-reports').value;
   const query = document.getElementById('search-reports').value.trim().toLowerCase();
 
   const filtered = state.reports.filter((r) => {
-    const matchScope = scope === 'all' || state.upvotedIds.has(r.id);
+    const matchScope =
+      scope === 'all'
+        ? true
+        : scope === 'user'
+          ? isUserReport(r, session)
+          : state.upvotedIds.has(r.id);
     const matchCat = state.activeCategoryFilter === 'ALL' || r.category === state.activeCategoryFilter;
     const matchStatus = statusFilter === 'ALL' || r.status === statusFilter;
     const matchQuery =
@@ -165,7 +184,7 @@ function renderReportCard(rep, maxUpvotes) {
         </div>
 
         <div class="flex items-center justify-between text-xs text-ink-600 dark:text-ink-400">
-          <span class="font-mono">#${escapeHtml(rep.id.slice(0, 8))}</span>
+          <span class="font-mono">#${escapeHtml(String(rep.id).slice(0, 8))}</span>
           <span>${formattedDate}</span>
         </div>
 

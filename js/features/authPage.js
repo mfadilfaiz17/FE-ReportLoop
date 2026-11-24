@@ -151,7 +151,7 @@ function bindNumericNimInput() {
 
 function init() {
   initTheme();
-  redirectIfSignedIn();
+  redirectIfSignedIn(role);
   submitLabel.dataset.idle = submitLabel.textContent;
 
   if (mode === 'login' && new URLSearchParams(window.location.search).get('daftar') === 'berhasil') {

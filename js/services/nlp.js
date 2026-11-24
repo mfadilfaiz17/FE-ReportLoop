@@ -38,9 +38,12 @@ export function predictNlpCategory(title, description) {
     maxScore = scores.Security;
   }
 
+  const tied = Object.values(scores).filter((s) => s === maxScore).length > 1;
   const confidence = maxScore === 0
-    ? 0.725
-    : Math.min(0.974, 0.78 + maxScore * 0.062);
+    ? 1 / 3
+    : tied
+      ? 0.5
+      : Math.min(0.974, 0.78 + maxScore * 0.062);
 
   return {
     category: bestCat,

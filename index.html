@@ -28,7 +28,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <header class="sticky top-0 z-30 border-b border-ink-200 dark:border-ink-800 bg-white/95 dark:bg-ink-950/95 backdrop-blur-sm safe-top">
+  <header class="sticky top-0 z-30 border-b border-ink-200 dark:border-ink-800 bg-ink-50/95 dark:bg-ink-950/95 backdrop-blur-sm safe-top">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       <a href="index.html" class="flex items-center gap-2.5 rounded-lg">
         <span class="w-9 h-9 rounded-lg bg-brand-700 dark:bg-brand-600 text-white flex items-center justify-center shrink-0">
@@ -73,12 +73,12 @@
             </h1>
 
             <p class="text-base sm:text-lg text-ink-600 dark:text-ink-300 leading-relaxed max-w-xl">
-              Sematkan titik koordinat di peta kampus Politeknik Negeri Indramayu, unggah foto kondisi terbaru, dan pantau perbaikan secara terbuka bersama mahasiswa lainnya.
+              Tandai titik kerusakan di peta Polindra, ambil foto langsung, dan pantau penanganannya.
             </p>
 
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
               <a id="hero-primary-cta" href="html/masuk.html" class="btn btn-primary px-6 text-base">Buat Laporan Mahasiswa</a>
-              <a href="html/admin-masuk.html" class="btn btn-ghost px-5 text-base">Panel Admin Sarpras</a>
+              <a href="#papan-publik" class="btn btn-ghost px-5 text-base">Lihat Papan Laporan</a>
             </div>
 
             <p class="text-xs sm:text-sm text-ink-600 dark:text-ink-400">
@@ -103,12 +103,12 @@
                     <div>
                       <span class="badge badge-cat">Infrastruktur</span>
                       <h2 class="mt-2 text-base font-bold text-ink-900 dark:text-white">Lampu lorong lantai 2 padam</h2>
-                      <p class="mt-1 text-xs text-ink-600 dark:text-ink-300 leading-relaxed">
-                        Klasifikasi otomatis NLP menetapkan kategori divisi dengan tingkat keyakinan 91%.
+                      <p class="mt-1 text-xs text-ink-600 dark:text-ink-300">
+                        Prediksi divisi otomatis (91% keyakinan)
                       </p>
                     </div>
                     <div class="text-right shrink-0">
-                      <span class="inline-flex items-center gap-1 rounded-lg bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 px-2.5 py-1.5 text-xs font-bold text-brand-700 dark:text-brand-400">
+                      <span class="inline-flex items-center gap-1 rounded-lg bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-700 px-2.5 py-1.5 text-xs font-bold text-brand-700 dark:text-brand-400">
                         +14 Dukungan
                       </span>
                     </div>
@@ -141,11 +141,8 @@
     <section id="alur-pelaporan" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14" data-reveal>
       <div class="max-w-2xl">
         <h2 class="text-2xl sm:text-3xl font-extrabold text-ink-900 dark:text-white tracking-tight">
-          Alur Pelaporan Terstruktur Tanpa Pesan Tenggelam
+          3 Langkah Pelaporan Terstruktur
         </h2>
-        <p class="mt-2 text-sm sm:text-base text-ink-600 dark:text-ink-300">
-          Menggantikan laporan di grup chat menjadi tiket spasial yang terverifikasi dan diprioritaskan berdasarkan kebutuhan mahasiswa.
-        </p>
       </div>
 
       <div class="mt-8 grid md:grid-cols-3 gap-6">
@@ -156,9 +153,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
             </svg>
           </div>
-          <h3 class="mt-4 text-lg font-bold text-ink-900 dark:text-white">1. Sematkan Titik Peta & Foto</h3>
+          <h3 class="mt-4 text-lg font-bold text-ink-900 dark:text-white">1. Tandai Peta & Foto Live</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
-            Pilih gedung atau titik koordinat di peta kampus, lalu ambil foto bukti langsung agar kondisi lapangan tercatat akurat.
+            Pilih titik lokasi kampus dan ambil foto langsung di tempat.
           </p>
         </article>
 
@@ -169,9 +166,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
             </svg>
           </div>
-          <h3 class="mt-4 text-lg font-bold text-ink-900 dark:text-white">2. Klasifikasi & Cek Duplikat 15 m</h3>
+          <h3 class="mt-4 text-lg font-bold text-ink-900 dark:text-white">2. Klasifikasi & Cek Duplikat</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
-            Sistem mengelompokkan keluhan ke divisi Infrastruktur, Kebersihan, atau Keamanan serta mendeteksi laporan serupa dalam radius 15 meter.
+            Otomatis masuk divisi terkait dengan deteksi duplikat radius 15 m.
           </p>
         </article>
 
@@ -181,16 +178,16 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
             </svg>
           </div>
-          <h3 class="mt-4 text-lg font-bold text-ink-900 dark:text-white">3. Dukungan Kolektif & Triase</h3>
+          <h3 class="mt-4 text-lg font-bold text-ink-900 dark:text-white">3. Dukungan & Prioritas</h3>
           <p class="mt-2 text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
-            Mahasiswa lain cukup menekan +1 Dukungan pada laporan yang sama sehingga Sarpras langsung melihat masalah paling mendesak.
+            Laporan dengan dukungan terbanyak langsung jadi prioritas utama.
           </p>
         </article>
       </div>
     </section>
 
     <!-- Penjelasan Peran Pengguna (Ritme Split Berbeda dari Grid 3 Kolom) -->
-    <section id="peran-sistem" class="border-y border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900/50 py-14" data-reveal>
+    <section id="peran-sistem" class="border-y border-ink-200 dark:border-ink-800 bg-ink-50/70 dark:bg-ink-900/50 py-14" data-reveal>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 items-stretch">
         <div class="card p-6 sm:p-8 flex flex-col justify-between gap-6">
           <div>
@@ -235,9 +232,9 @@
               </li>
             </ul>
           </div>
-          <div>
-            <a href="html/admin-masuk.html" class="btn btn-ghost w-full sm:w-auto">Masuk sebagai Admin Sarpras</a>
-          </div>
+          <p class="text-xs font-medium text-ink-500 dark:text-ink-400">
+            Akses triase tersedia melalui portal internal unit Sarpras.
+          </p>
         </div>
       </div>
     </section>
@@ -250,7 +247,7 @@
             Papan Laporan Fasilitas Terkini
           </h2>
           <p class="mt-1 text-sm sm:text-base text-ink-600 dark:text-ink-300">
-            Pratinjau terbuka laporan aktif kampus. Masuk sebagai mahasiswa untuk memberi dukungan atau mengirim laporan baru.
+            Pantau laporan aktif atau masuk untuk memberi dukungan.
           </p>
         </div>
         <a href="html/masuk.html" class="btn btn-ghost shrink-0">Masuk untuk Memberi Dukungan</a>
@@ -266,14 +263,14 @@
       <div class="rounded-2xl bg-brand-700 dark:bg-brand-900 text-white p-8 sm:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         <div class="max-w-2xl">
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Temukan fasilitas kampus yang perlu segera diperbaiki?
+            Ada fasilitas kampus yang rusak?
           </h2>
-          <p class="mt-2 text-sm sm:text-base text-blue-100 leading-relaxed">
-            Catat titik lokasinya dalam hitungan detik agar laporan tidak tenggelam di percakapan grup.
+          <p class="mt-2 text-sm sm:text-base text-blue-100">
+            Laporkan langsung dari titik lokasinya.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <a href="html/masuk.html" class="btn bg-white text-brand-800 hover:bg-blue-50 px-6">Mulai Melapor</a>
+          <a href="html/masuk.html" class="btn bg-ink-50 text-brand-800 hover:bg-blue-50 px-6">Mulai Melapor</a>
           <a href="html/daftar.html" class="btn border border-white/40 text-white hover:bg-white/10 px-5">Daftar Akun NIM</a>
         </div>
       </div>

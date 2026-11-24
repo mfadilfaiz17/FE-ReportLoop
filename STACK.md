@@ -38,7 +38,7 @@ FE-ReportLoop/
 â”œâ”€â”€ user.html                   # Ruang Kerja Mahasiswa (Peta + Form Laporan + Papan Upvote)
 â”œâ”€â”€ admin.html                  # Panel Triase Admin Sarpras (KPI + Antrean Prioritas + Peta)
 â”œâ”€â”€ masuk.html / daftar.html    # Autentikasi Mahasiswa (NIM)
-â”œâ”€â”€ admin-masuk.html / admin-daftar.html # Autentikasi Petugas Sarpras (Email + Kode Undangan)
+â”œâ”€â”€ admin-masuk.html / admin-daftar.html # Autentikasi Petugas Sarpras terisolasi (terpisah dari UI publik/mahasiswa demi keamanan CIA; disiapkan untuk subdomain khusus di produksi)
 â”œâ”€â”€ PRD.md                      # Spesifikasi Kebutuhan Produk Frontend
 â”œâ”€â”€ DESIGN.md                   # Sistem Desain Blue-White Light/Dark Mode
 â”œâ”€â”€ STACK.md                    # Dokumentasi Arsitektur & Kontrak Teknis
@@ -68,9 +68,9 @@ FE-ReportLoop/
     â”œâ”€â”€ features/               # Kontroler UI per modul (setara komponen pintar React)
     â”‚   â”œâ”€â”€ header.js           # Navigasi aktif, toggle Light/Dark Mode, toggle Demo/Live API
     â”‚   â”œâ”€â”€ map.js              # Inisialisasi Leaflet, GPS Geolocation, & sinkronisasi marker
-    â”‚   â”œâ”€â”€ photo.js            # Upload foto, validasi tipe/ukuran, & pratinjau kamera
-    â”‚   â”œâ”€â”€ reportForm.js       # Submit laporan, deteksi duplikat 15m, upvote, & update status
-    â”‚   â”œâ”€â”€ publicBoard.js      # Filter kategori/status, pencarian, tab dukungan, & render kartu
+    â”‚   â”œâ”€â”€ photo.js            # Upload foto live wajib (tanpa opsi foto lama), validasi tipe/ukuran, & pratinjau kamera
+    â”‚   â”œâ”€â”€ reportForm.js       # Submit laporan (blokir foto lama), deteksi duplikat 15m, upvote, & update status
+    â”‚   â”œâ”€â”€ publicBoard.js      # Filter kategori/status, pencarian, tab dukungan, & render kartu laporan umum
     â”‚   â”œâ”€â”€ adminPanel.js       # Hitung KPI riil & render antrean triase Sarpras
     â”‚   â”œâ”€â”€ duplicateModal.js   # Kontrol dialog aksesibel (Escape & Tab focus trap)
     â”‚   â””â”€â”€ authPage.js         # Validasi form login/register Mahasiswa & Admin

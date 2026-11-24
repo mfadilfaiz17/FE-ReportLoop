@@ -103,7 +103,7 @@ export function renderProfilePanel(onSessionUpdated) {
                 ? `<button type="button" data-nav-view="antrean" class="btn btn-sm btn-primary">Buka Antrean Triase</button>
                    <button type="button" data-nav-view="peta" class="btn btn-sm btn-ghost">Buka Peta Kampus</button>`
                 : `<button type="button" data-nav-view="lapor" class="btn btn-sm btn-primary">Buat Laporan Baru</button>
-                   <button type="button" data-nav-view="papan" class="btn btn-sm btn-ghost">Buka Papan Laporan</button>`
+                   <button type="button" data-nav-view="papan" data-board-scope="user" class="btn btn-sm btn-ghost">Buka Papan Laporan</button>`
             }
           </div>
         </div>
@@ -133,8 +133,8 @@ export function renderProfilePanel(onSessionUpdated) {
                               <button
                                 type="button"
                                 data-action="focus-map"
-                                data-lat="${r.latitude}"
-                                data-lng="${r.longitude}"
+                                data-lat="${escapeHtml(r.latitude)}"
+                                data-lng="${escapeHtml(r.longitude)}"
                                 class="btn btn-sm btn-ghost shrink-0"
                               >
                                 Lihat di Peta

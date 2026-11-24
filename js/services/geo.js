@@ -20,3 +20,18 @@ export function haversineDistanceMeters(lat1, lon1, lat2, lon2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return EARTH_RADIUS_METERS * c;
 }
+
+// Uji titik di dalam poligon (ray casting). polygon: [[lat, lng], ...]
+export function isPointInPolygon(lat, lng, polygon) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const [latI, lngI] = polygon[i];
+    const [latJ, lngJ] = polygon[j];
+    const crosses =
+      (latI > lat) !== (latJ > lat) &&
+      lng < ((lngJ - lngI) * (lat - latI)) / (latJ - latI) + lngI;
+    if (crosses) inside = !inside;
+  }
+  return inside;
+}

@@ -52,7 +52,8 @@ export async function postUpvote(reportId) {
       method: 'POST',
       headers: buildAuthHeaders(),
     });
-    return res.ok ? await res.json() : null;
+    const data = await res.json().catch(() => null);
+    return { ok: res.ok, status: res.status, data };
   } catch (_) {
     return null;
   }

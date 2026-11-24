@@ -56,7 +56,7 @@ function renderQueueRow(rep, rank) {
         <div class="flex flex-wrap items-center gap-2">
           <span class="${getStatusBadgeClass(rep.status)}">${statusText}</span>
           <span class="${getCategoryBadgeClass(rep.category)}">${catText}</span>
-          <span class="text-xs font-mono text-ink-600 dark:text-ink-400">#${escapeHtml(rep.id.slice(0, 8))}</span>
+          <span class="text-xs font-mono text-ink-600 dark:text-ink-400">#${escapeHtml(String(rep.id).slice(0, 8))}</span>
         </div>
         <h3 class="mt-2 text-base font-bold text-ink-900 dark:text-white">${escapeHtml(rep.title)}</h3>
         <p class="mt-1 text-sm text-ink-600 dark:text-ink-300 leading-relaxed line-clamp-2">${escapeHtml(rep.description)}</p>

@@ -1,16 +1,16 @@
-/* Token warna Blue-White (Light Mode) & Blue-Slate (Dark Mode), komponen UI, dan efek gulir. */
+/* Token warna Blue-SoftWhite (Light Mode) & Blue-Slate (Dark Mode), komponen UI, dan efek gulir. */
 
 :root {
   --brand: #1d4ed8;
   --brand-dark: #1e40af;
-  --brand-soft: #eff6ff;
+  --brand-soft: #e8f0fe;
   --brand-line: #bfdbfe;
-  --page: #f8fafc;
-  --surface: #ffffff;
-  --surface-muted: #f1f5f9;
+  --page: #f1f5f9;
+  --surface: #f8fafc;
+  --surface-muted: #e2e8f0;
   --ink: #0f172a;
   --ink-soft: #475569;
-  --line: #d5deec;
+  --line: #cbd5e1;
 }
 
 html.dark {
@@ -36,7 +36,20 @@ body {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   background-color: var(--page);
   color: var(--ink);
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.font-mono,
+code,
+pre,
+input,
+select,
+textarea {
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 a[href],
@@ -94,14 +107,23 @@ html.dark .app-header {
 .nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.375rem;
   min-height: 44px;
-  padding: 0 0.875rem;
+  padding: 0 0.6875rem;
   border-radius: 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
+  white-space: nowrap;
   color: #dbeafe;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+@media (min-width: 640px) {
+  .nav-link {
+    gap: 0.5rem;
+    padding: 0 0.875rem;
+    font-size: 0.875rem;
+  }
 }
 .nav-link:hover {
   background: rgba(255, 255, 255, 0.14);
@@ -128,16 +150,19 @@ html.dark .nav-link[aria-current='page'] {
 
 .btn {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  max-width: 100%;
   min-height: 44px;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   border: 1px solid transparent;
   font-size: 0.875rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
+  text-align: center;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .btn:disabled {
@@ -189,7 +214,7 @@ html.dark .btn-danger-ghost:hover:not(:disabled) {
 
 .btn-sm {
   min-height: 44px;
-  padding: 0 0.875rem;
+  padding: 0.4375rem 0.875rem;
   font-size: 0.8125rem;
 }
 
@@ -278,13 +303,28 @@ html.dark .error-text {
 }
 
 .tab {
-  min-height: 48px;
-  padding: 0 1.25rem;
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5rem 0.625rem;
   border-bottom: 3px solid transparent;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
   color: var(--ink-soft);
   transition: color 0.15s ease, border-color 0.15s ease;
+}
+@media (min-width: 640px) {
+  .tab {
+    flex: 0 1 auto;
+    min-height: 48px;
+    padding: 0 1.25rem;
+    font-size: 0.9375rem;
+  }
 }
 .tab:hover {
   color: var(--brand);

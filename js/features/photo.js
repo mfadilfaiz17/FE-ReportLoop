@@ -1,10 +1,17 @@
-// Fitur foto bukti: unggah kamera/galeri, validasi MIME & ukuran maks 5 MB, dan foto contoh.
+// Fitur foto bukti: unggah kamera/galeri, validasi MIME & ukuran maks 5 MB, dan cek umur foto (< 24 jam).
 
 import { state } from '../state/store.js';
 import { showToast } from '../utils/toast.js';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTO_AGE_MS = 24 * 60 * 60 * 1000;
+
+function syncSubmitButtonState() {
+  const submitBtn = document.getElementById('btn-submit-report');
+  if (!submitBtn) return;
+  submitBtn.disabled = Boolean(state.isStalePhoto);
+}
 
 export function handlePhotoChange(event) {
   const file = event.target.files[0];
@@ -13,6 +20,9 @@ export function handlePhotoChange(event) {
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
     event.target.value = '';
     state.currentPhotoFile = null;
+    state.isStalePhoto = false;
+    hideStaleAlert();
+    syncSubmitButtonState();
     showToast('Format foto harus JPG, PNG, atau WebP.', 'error');
     return;
   }
@@ -20,11 +30,16 @@ export function handlePhotoChange(event) {
   if (file.size > MAX_FILE_SIZE_BYTES) {
     event.target.value = '';
     state.currentPhotoFile = null;
+    state.isStalePhoto = false;
+    hideStaleAlert();
+    syncSubmitButtonState();
     const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
     showToast(`Ukuran foto (${sizeMb} MB) melebihi batas maksimal 5 MB.`, 'error');
     return;
   }
 
+  const isStale = Number.isFinite(file.lastModified) && (Date.now() - file.lastModified) > MAX_PHOTO_AGE_MS;
+  state.isStalePhoto = isStale;
   state.currentPhotoFile = file;
 
   const reader = new FileReader();
@@ -37,31 +52,28 @@ export function handlePhotoChange(event) {
   };
   reader.onerror = function () {
     state.currentPhotoFile = null;
+    state.isStalePhoto = false;
+    syncSubmitButtonState();
     showToast('Foto tidak bisa dibaca. Pilih file gambar lain.', 'error');
   };
   reader.readAsDataURL(file);
-}
 
-export function useSamplePhoto() {
-  const timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
-      <rect width="640" height="360" fill="#1e3a8a"/>
-      <text x="320" y="170" fill="#ffffff" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">FOTO CONTOH UNTUK UJI COBA</text>
-      <text x="320" y="205" fill="#dbeafe" font-family="monospace" font-size="14" text-anchor="middle">${timestamp}</text>
-    </svg>
-  `;
-  state.currentPhotoDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-  state.currentPhotoFile = null;
-  document.getElementById('photo-preview-img').src = state.currentPhotoDataUrl;
-  document.getElementById('photo-filename').textContent = 'foto-contoh.svg';
-  document.getElementById('photo-preview-wrapper').classList.remove('hidden');
-  showToast('Foto contoh dilampirkan (hanya untuk uji coba).', 'info');
+  if (isStale) {
+    showStaleAlert();
+    syncSubmitButtonState();
+    showToast('Foto lama (lebih dari 24 jam) ditolak. Ambil foto terbaru di lokasi.', 'error');
+  } else {
+    hideStaleAlert();
+    syncSubmitButtonState();
+  }
 }
 
 export function clearPhoto() {
   state.currentPhotoDataUrl = null;
   state.currentPhotoFile = null;
+  state.isStalePhoto = false;
+  hideStaleAlert();
+  syncSubmitButtonState();
   const input = document.getElementById('input-photo');
   const wrapper = document.getElementById('photo-preview-wrapper');
   if (input) input.value = '';
@@ -82,7 +94,6 @@ export function bindPhotoEvents() {
   const input = document.getElementById('input-photo');
   if (!input) return;
   input.addEventListener('change', handlePhotoChange);
-  document.getElementById('btn-sample-photo').addEventListener('click', useSamplePhoto);
   document.getElementById('btn-clear-photo').addEventListener('click', clearPhoto);
   document.getElementById('btn-hide-stale').addEventListener('click', hideStaleAlert);
 }

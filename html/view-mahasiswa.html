@@ -9,10 +9,10 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h1 class="text-lg sm:text-xl font-extrabold text-ink-900 dark:text-white">Pilih lokasi kerusakan</h1>
-          <p class="hint">Klik peta, geser pin biru, atau gunakan GPS perangkat Anda.</p>
+          <p class="hint">Klik peta atau gunakan GPS.</p>
         </div>
-        <button id="btn-use-gps" type="button" class="btn btn-sm btn-ghost shrink-0">
-          <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <button id="btn-use-gps" type="button" class="btn btn-sm btn-ghost w-full sm:w-auto sm:shrink-0">
+          <svg class="w-4 h-4 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
           </svg>
@@ -22,7 +22,7 @@
 
       <div class="relative mt-3 rounded-lg border border-ink-200 dark:border-ink-800 overflow-hidden bg-ink-100 dark:bg-ink-900">
         <div id="campus-map" role="region" aria-label="Peta interaktif kampus. Untuk memilih lokasi tanpa mouse, isi kolom Latitude dan Longitude pada formulir laporan."></div>
-        <div class="absolute bottom-2 left-2 z-20 rounded-md bg-white dark:bg-ink-900 px-2.5 py-1 border border-ink-200 dark:border-ink-700 text-xs font-mono text-ink-700 dark:text-ink-200">
+        <div class="absolute bottom-2 left-2 z-20 rounded-md bg-ink-50 dark:bg-ink-900 px-2.5 py-1 border border-ink-200 dark:border-ink-700 text-xs font-mono text-ink-700 dark:text-ink-200">
           Pin: <strong id="map-coord-badge">-6.40920, 108.28250</strong>
         </div>
       </div>
@@ -38,15 +38,15 @@
       </div>
 
       <div class="mt-5 pt-4 border-t border-ink-200 dark:border-ink-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p class="text-xs text-ink-600 dark:text-ink-300">Ingin melihat atau mendukung laporan teman yang sudah masuk?</p>
-        <button type="button" data-nav-view="papan" class="btn btn-sm btn-ghost shrink-0">Buka Papan Laporan</button>
+        <p class="text-xs text-ink-600 dark:text-ink-300">Lihat &amp; dukung laporan lainnya</p>
+        <button type="button" data-nav-view="papan" class="btn btn-sm btn-ghost w-full sm:w-auto sm:shrink-0">Buka Papan Laporan</button>
       </div>
     </div>
 
     <!-- Kolom kanan: Form Pelaporan Baru -->
     <div class="lg:col-span-6 card p-4 sm:p-5">
       <h2 class="text-lg sm:text-xl font-extrabold text-ink-900 dark:text-white">Buat laporan baru</h2>
-      <p class="hint">Kategori ditebak otomatis dari judul dan deskripsi sebelum dikirim.</p>
+      <p class="hint">Kategori terisi otomatis dari judul &amp; deskripsi.</p>
 
       <div id="stale-photo-alert" role="alert" class="hidden mt-4 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/70 p-3.5 text-sm text-red-900 dark:text-red-200">
         <div class="flex items-start justify-between gap-2">
@@ -75,7 +75,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label for="input-lat" class="label">Latitude</label>
             <input id="input-lat" type="number" step="any" required value="-6.40920" class="field font-mono" />
@@ -87,33 +87,18 @@
         </div>
 
         <div>
-          <label for="input-photo" class="label">Foto bukti kerusakan</label>
-          <input id="input-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="block w-full text-sm text-ink-700 dark:text-ink-200 file:mr-3 file:min-h-[36px] file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-100 dark:file:bg-brand-900 file:text-brand-900 dark:file:text-brand-100 hover:file:bg-brand-200 dark:hover:file:bg-brand-800 border border-ink-200 dark:border-ink-800 rounded-lg bg-white dark:bg-ink-900" />
-          <p class="hint">Format JPG, PNG, atau WebP dengan ukuran maksimal 5 MB.</p>
-          <button id="btn-sample-photo" type="button" class="mt-2 btn btn-sm btn-ghost">Pakai foto contoh untuk uji coba</button>
+          <label for="input-photo" class="label">Foto bukti kerusakan (wajib foto live)</label>
+          <input id="input-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="block w-full text-sm text-ink-700 dark:text-ink-200 file:mr-3 file:min-h-[36px] file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-100 dark:file:bg-brand-900 file:text-brand-900 dark:file:text-brand-100 hover:file:bg-brand-200 dark:hover:file:bg-brand-800 border border-ink-200 dark:border-ink-800 rounded-lg bg-ink-50 dark:bg-ink-900" />
+          <p class="hint">Ambil foto langsung di lokasi. Format JPG, PNG, atau WebP (maks. 5 MB).</p>
 
           <div id="photo-preview-wrapper" class="hidden mt-3 rounded-lg overflow-hidden border border-ink-200 dark:border-ink-800 bg-ink-100 dark:bg-ink-900">
             <img id="photo-preview-img" src="" alt="Pratinjau foto bukti" width="640" height="360" class="w-full h-36 object-cover" />
-            <div class="flex items-center justify-between gap-2 bg-white dark:bg-ink-900 px-3 py-2 border-t border-ink-200 dark:border-ink-800">
+            <div class="flex items-center justify-between gap-2 bg-ink-50 dark:bg-ink-900 px-3 py-2 border-t border-ink-200 dark:border-ink-800">
               <span id="photo-filename" class="truncate text-xs font-mono text-ink-700 dark:text-ink-200"></span>
               <button id="btn-clear-photo" type="button" class="btn btn-sm btn-danger-ghost">Hapus foto</button>
             </div>
           </div>
         </div>
-
-        <fieldset class="rounded-lg border border-ink-200 dark:border-ink-800 p-3">
-          <legend class="px-1 text-xs font-semibold text-ink-700 dark:text-ink-300">Alat uji: simulasi umur foto (hanya mode demo)</legend>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 min-h-[44px] px-3 rounded-lg border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 text-sm text-ink-900 dark:text-ink-100">
-              <input type="radio" name="exif_sim" value="fresh" checked class="accent-blue-700" />
-              <span>Foto baru (kurang dari 24 jam)</span>
-            </label>
-            <label class="flex items-center gap-2 min-h-[44px] px-3 rounded-lg border border-ink-200 dark:border-ink-800 bg-white dark:bg-ink-900 text-sm text-ink-900 dark:text-ink-100">
-              <input type="radio" name="exif_sim" value="stale" class="accent-blue-700" />
-              <span>Foto lama (lebih dari 24 jam)</span>
-            </label>
-          </div>
-        </fieldset>
 
         <button id="btn-submit-report" type="submit" class="btn btn-primary w-full">Kirim laporan ke Sarpras</button>
       </form>
@@ -122,18 +107,19 @@
 
   <!-- HALAMAN 2: PAPAN LAPORAN KAMPUS -->
   <div id="page-papan" data-page="papan" class="hidden card overflow-hidden">
-    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ink-200 dark:border-ink-800 px-3 sm:px-5">
-      <div class="flex" role="tablist" aria-label="Daftar laporan">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-ink-200 dark:border-ink-800 px-3 sm:px-5 pt-1 sm:pt-0 pb-2.5 sm:pb-0">
+      <div class="flex w-full sm:w-auto overflow-x-auto no-scrollbar border-b sm:border-b-0 border-ink-200 dark:border-ink-800 -mx-3 px-3 sm:mx-0 sm:px-0" role="tablist" aria-label="Daftar laporan">
         <button id="tab-semua" type="button" role="tab" aria-selected="true" aria-controls="public-reports-grid" data-scope="all" class="tab">Semua laporan</button>
+        <button id="tab-laporan-saya" type="button" role="tab" aria-selected="false" aria-controls="public-reports-grid" data-scope="user" class="tab">Laporan saya</button>
         <button id="tab-saya" type="button" role="tab" aria-selected="false" aria-controls="public-reports-grid" data-scope="mine" class="tab">Dukungan saya</button>
       </div>
-      <button type="button" data-nav-view="lapor" class="btn btn-sm btn-primary my-2">Buat Laporan Baru</button>
+      <button type="button" data-nav-view="lapor" class="btn btn-sm btn-primary w-full sm:w-auto sm:my-2">Buat Laporan Baru</button>
     </div>
 
     <div class="p-4 sm:p-6">
       <h1 class="text-xl sm:text-2xl font-extrabold text-ink-900 dark:text-white">Papan laporan kampus</h1>
       <p id="board-summary" class="text-sm text-ink-600 dark:text-ink-300" aria-live="polite"></p>
-      <p class="hint">Tekan Dukung pada laporan yang juga Anda temui agar Sarpras mendahulukannya.</p>
+      <p class="hint">Dukung laporan yang Anda temui agar diprioritaskan.</p>
 
       <div class="mt-4 flex flex-col sm:flex-row gap-3">
         <div class="flex-1">

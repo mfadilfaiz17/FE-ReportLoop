@@ -14,6 +14,7 @@ import {
   updateReportStatus,
 } from './features/reportForm.js';
 import { requireRole } from './services/auth.js';
+import { state, saveDemoState } from './state/store.js';
 import { initTheme } from './utils/theme.js';
 import { initScrollReveal } from './utils/scrollReveal.js';
 
@@ -44,6 +45,7 @@ async function loadPartials() {
 }
 
 export function renderAll() {
+  if (!state.isLiveApi) saveDemoState();
   if (role === 'user') renderPublicBoard();
   if (role === 'admin') renderAdminTable();
   renderProfilePanel(renderSession);

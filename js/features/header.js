@@ -9,6 +9,7 @@ import { logout, ROLE_LOGIN } from '../services/auth.js';
 import { showToast } from '../utils/toast.js';
 import { focusMapOn } from './map.js';
 import { renderProfilePanel } from './profile.js';
+import { setScope } from './publicBoard.js';
 
 const NAV_ITEMS = {
   user: [
@@ -140,9 +141,8 @@ export async function toggleApiMode(renderAll) {
     try {
       const liveReports = await fetchReports(2500);
       state.isLiveApi = true;
-      if (Array.isArray(liveReports) && liveReports.length > 0) {
-        state.reports = liveReports;
-      }
+      state.reports = Array.isArray(liveReports) ? liveReports : [];
+      state.upvotedIds = new Set();
       setApiModeUI('live');
       renderAll();
       showToast('Terhubung ke server FastAPI lokal.', 'success');
@@ -179,7 +179,11 @@ export function bindHeaderEvents(renderAll, session) {
   document.addEventListener('click', (event) => {
     const navBtn = event.target.closest('[data-nav-view]');
     if (!navBtn) return;
-    switchView(session.role, navBtn.dataset.navView);
+    const targetView = navBtn.dataset.navView;
+    switchView(session.role, targetView);
+    if (session.role === 'user' && targetView === 'papan') {
+      setScope(navBtn.dataset.boardScope || 'all');
+    }
   });
 
   // Dukungan tombol Back/Forward browser
@@ -193,5 +197,7 @@ export function bindHeaderEvents(renderAll, session) {
   switchView(session.role, initialHash || DEFAULT_VIEW[session.role], { updateHash: false });
 
   document.getElementById('btn-api-mode')?.addEventListener('click', () => toggleApiMode(renderAll));
-  document.getElementById('btn-logout')?.addEventListener('click', () => doLogout(session.role));
+  document.querySelectorAll('[data-logout-trigger]').forEach((btn) => {
+    btn.addEventListener('click', () => doLogout(session.role));
+  });
 }

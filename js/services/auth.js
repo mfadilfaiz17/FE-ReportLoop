@@ -12,6 +12,7 @@ const ACCOUNT_KEYS = {
   admin: 'reportloop.accounts.admin',
 };
 const SESSION_KEY = 'reportloop.session';
+const SESSION_MAX_AGE_MS = 8 * 60 * 60 * 1000;
 
 // Kode undangan admin untuk demo. Ganti dengan validasi server nanti.
 export const ADMIN_INVITE_CODE_DEMO = 'SARPRAS-DEMO';
@@ -129,6 +130,10 @@ export async function loginAccount(role, identifier, password) {
 export function getSession() {
   const s = readJson(SESSION_KEY, null);
   if (!s || (s.role !== 'user' && s.role !== 'admin')) return null;
+  if (!Number.isFinite(s.at) || Date.now() - s.at > SESSION_MAX_AGE_MS) {
+    logout();
+    return null;
+  }
   return s;
 }
 
@@ -171,7 +176,7 @@ export function requireRole(role) {
 }
 
 // Dipanggil di halaman masuk/daftar: bila sudah login, langsung ke beranda
-export function redirectIfSignedIn() {
+export function redirectIfSignedIn(role) {
   const s = getSession();
-  if (s) window.location.replace(ROLE_HOME[s.role]);
+  if (s && (!role || s.role === role)) window.location.replace(ROLE_HOME[s.role]);
 }

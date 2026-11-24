@@ -6,11 +6,12 @@
 // Di React bisa jadi <ReportForm /> + hook useReports().
 // ==========================================================================
 
-import { DUPLICATE_RADIUS_METERS } from '../config/constants.js';
+import { DUPLICATE_RADIUS_METERS, CAMPUS_BOUNDARY } from '../config/constants.js';
 import { state } from '../state/store.js';
 import { predictNlpCategory } from '../services/nlp.js';
-import { haversineDistanceMeters } from '../services/geo.js';
+import { haversineDistanceMeters, isPointInPolygon } from '../services/geo.js';
 import { postReport, postUpvote, patchReportStatus } from '../services/api.js';
+import { getSession } from '../services/auth.js';
 import { showToast } from '../utils/toast.js';
 import { getCategoryBadgeClass, CATEGORY_LABEL } from '../utils/badges.js';
 import { clearPhoto, showStaleAlert, hideStaleAlert } from './photo.js';
@@ -46,27 +47,31 @@ function setSubmitLoading(isLoading) {
 }
 
 function resetReportForm() {
-  document.getElementById('input-title').value = '';
-  document.getElementById('input-description').value = '';
+  const titleEl = document.getElementById('input-title');
+  const descEl = document.getElementById('input-description');
+  if (titleEl) titleEl.value = '';
+  if (descEl) descEl.value = '';
   clearPhoto();
   updateNlpPreview();
 }
 
 function openDuplicate(existing, distance, payload, renderAll) {
   openDuplicateModal(existing, distance, payload, {
-    onUpvote: (id) => {
-      upvoteReport(id, renderAll);
-      resetReportForm();
+    onUpvote: async (id) => {
+      if (await upvoteReport(id, renderAll)) resetReportForm();
     },
-    onForceSubmit: (saved) => finalizeCreateReport(saved, renderAll),
+    onForceSubmit: (saved) => forceSubmitReport(saved, renderAll),
   });
 }
 
 export function finalizeCreateReport(payload, renderAll) {
+  const session = getSession();
   const newReport = {
     id: 'rep-' + (window.crypto && crypto.randomUUID
       ? crypto.randomUUID().slice(0, 8)
       : Math.random().toString(16).slice(2, 10)),
+    user_id: session?.id || null,
+    reporter_name: session?.name || null,
     title: payload.title,
     description: payload.description,
     photo_url: payload.photoUrl,
@@ -92,15 +97,70 @@ export function finalizeCreateReport(payload, renderAll) {
   );
 }
 
+function isStalePhotoError(data) {
+  const detail = data && typeof data === 'object' ? (data.detail ?? data) : data;
+  const text = typeof detail === 'string' ? detail : JSON.stringify(detail || {});
+  return /STALE_PHOTO|foto lama|24 jam/i.test(text);
+}
+
+async function forceSubmitReport(payload, renderAll) {
+  if (!(state.isLiveApi && payload.photoFile)) {
+    finalizeCreateReport(payload, renderAll);
+    return;
+  }
+
+  setSubmitLoading(true);
+  try {
+    const res = await postReport({
+      title: payload.title,
+      description: payload.description,
+      latitude: payload.latitude,
+      longitude: payload.longitude,
+      photoFile: payload.photoFile,
+      forceSubmit: true,
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data && data.id) {
+      state.reports.unshift(data);
+      state.upvotedIds.add(data.id);
+      resetReportForm();
+      renderAll();
+      focusMapOn(data.latitude ?? payload.latitude, data.longitude ?? payload.longitude, 18);
+      showToast(`Laporan tersimpan di server (${CATEGORY_LABEL[data.category] || data.category || payload.nlp.category}).`, 'success');
+      return;
+    }
+
+    const errMsg = typeof data.detail === 'string' ? data.detail : data.detail?.message;
+    showToast(errMsg || `Server menolak laporan (kode ${res.status}). Laporan belum tersimpan, silakan coba lagi.`, 'error');
+  } catch (err) {
+    showToast('Server FastAPI tidak terjangkau. Laporan belum tersimpan, silakan coba lagi.', 'error');
+  } finally {
+    setSubmitLoading(false);
+  }
+}
+
 export async function handleReportSubmit(event, renderAll) {
   event.preventDefault();
   hideStaleAlert();
 
-  const title = document.getElementById('input-title').value.trim();
-  const description = document.getElementById('input-description').value.trim();
-  const latitude = parseFloat(document.getElementById('input-lat').value);
-  const longitude = parseFloat(document.getElementById('input-lng').value);
-  const exifSim = document.querySelector('input[name="exif_sim"]:checked').value;
+  const form = event.currentTarget instanceof HTMLFormElement
+    ? event.currentTarget
+    : document.getElementById('report-form');
+  const titleEl = form?.querySelector('#input-title') || document.getElementById('input-title');
+  const descEl = form?.querySelector('#input-description') || document.getElementById('input-description');
+  const latEl = form?.querySelector('#input-lat') || document.getElementById('input-lat');
+  const lngEl = form?.querySelector('#input-lng') || document.getElementById('input-lng');
+
+  if (!titleEl || !descEl || !latEl || !lngEl) {
+    showToast('Elemen form laporan tidak lengkap. Muat ulang halaman dan coba lagi.', 'error');
+    return;
+  }
+
+  const title = titleEl.value.trim();
+  const description = descEl.value.trim();
+  const latitude = parseFloat(latEl.value);
+  const longitude = parseFloat(lngEl.value);
 
   if (!title || !description) {
     showToast('Isi judul dan deskripsi laporan terlebih dahulu.', 'error');
@@ -110,20 +170,24 @@ export async function handleReportSubmit(event, renderAll) {
     showToast('Koordinat belum valid. Pilih titik di peta atau isi latitude dan longitude.', 'error');
     return;
   }
-  if (!state.currentPhotoDataUrl && !state.currentPhotoFile) {
-    showToast('Lampirkan foto bukti, atau pakai foto contoh untuk uji coba.', 'error');
+  if (!isPointInPolygon(latitude, longitude, CAMPUS_BOUNDARY)) {
+    showToast('Lokasi di luar area kampus Politeknik Negeri Indramayu. Pilih titik di dalam area kampus pada peta.', 'error');
+    return;
+  }
+  if (!state.currentPhotoFile) {
+    showToast('Ambil dan lampirkan foto bukti langsung di lokasi.', 'error');
     return;
   }
 
   // Lapis 1: validasi umur foto
-  if (exifSim === 'stale') {
+  if (state.isStalePhoto) {
     showStaleAlert();
     showToast('Foto lama (lebih dari 24 jam) ditolak. Ambil foto terbaru di lokasi.', 'error');
     return;
   }
 
   const nlp = predictNlpCategory(title, description);
-  const candidate = { title, description, latitude, longitude, nlp, photoUrl: state.currentPhotoDataUrl };
+  const candidate = { title, description, latitude, longitude, nlp, photoUrl: state.currentPhotoDataUrl, photoFile: state.currentPhotoFile };
 
   // Mode FastAPI
   if (state.isLiveApi && state.currentPhotoFile) {
@@ -138,34 +202,53 @@ export async function handleReportSubmit(event, renderAll) {
         forceSubmit: false,
       });
 
-      const data = await res.json().catch(() => ({}));
-      if (res.status === 400) {
+      const rawText = await res.text();
+      let data = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (_) {
+        data = { detail: rawText || null };
+      }
+
+      if (res.status === 400 && isStalePhotoError(data)) {
+        state.isStalePhoto = true;
+        const submitBtn = document.getElementById('btn-submit-report');
+        if (submitBtn) submitBtn.disabled = true;
         showStaleAlert();
-        showToast(data.detail || 'Foto lama (lebih dari 24 jam) ditolak. Ambil foto terbaru di lokasi.', 'error');
+        const detailMsg = typeof data.detail === 'string' ? data.detail : data.detail?.message;
+        showToast(detailMsg || 'Foto lama (lebih dari 24 jam) ditolak. Ambil foto terbaru di lokasi.', 'error');
         return;
       }
       if (res.status === 409) {
-        const existing = data.detail?.existing_report;
+        const existing = data.detail?.existing_report || data.existing_report;
         if (existing) {
           openDuplicate(existing, existing.distance_meters, candidate, renderAll);
         } else {
-          showToast(data.detail || 'Laporan serupa sudah ada di sekitar lokasi ini.', 'warning');
+          const dupMsg = typeof data.detail === 'string' ? data.detail : data.detail?.message;
+          showToast(dupMsg || 'Laporan serupa sudah ada di sekitar lokasi ini.', 'warning');
         }
         return;
       }
       if (res.ok) {
-        state.reports.unshift(data);
-        state.upvotedIds.add(data.id);
-        resetReportForm();
-        renderAll();
-        focusMapOn(data.latitude, data.longitude, 18);
-        showToast(`Laporan tersimpan di server (${CATEGORY_LABEL[data.category] || data.category}).`, 'success');
+        const savedReport = data && typeof data === 'object' && data.id ? data : null;
+        if (savedReport) {
+          state.reports.unshift(savedReport);
+          state.upvotedIds.add(savedReport.id);
+          resetReportForm();
+          renderAll();
+          focusMapOn(savedReport.latitude ?? latitude, savedReport.longitude ?? longitude, 18);
+          showToast(`Laporan tersimpan di server (${CATEGORY_LABEL[savedReport.category] || savedReport.category || candidate.nlp.category}).`, 'success');
+          return;
+        }
+        showToast('Respons server berhasil tetapi format data laporan tidak lengkap.', 'error');
         return;
       }
-      showToast(`Server menolak laporan (kode ${res.status}). Laporan belum tersimpan, silakan coba lagi.`, 'error');
+      const errMsg = typeof data.detail === 'string' ? data.detail : data.detail?.message;
+      showToast(errMsg || `Server menolak laporan (kode ${res.status}). Laporan belum tersimpan, silakan coba lagi.`, 'error');
       return;
     } catch (err) {
-      showToast('Server FastAPI tidak terjangkau. Laporan diproses dalam mode demo.', 'warning');
+      const reason = err && err.message ? ` (${err.message})` : '';
+      showToast(`Server FastAPI tidak terjangkau${reason}. Laporan diproses dalam mode demo.`, 'warning');
     } finally {
       setSubmitLoading(false);
     }
@@ -194,34 +277,53 @@ export async function handleReportSubmit(event, renderAll) {
   finalizeCreateReport(candidate, renderAll);
 }
 
+const pendingUpvotes = new Set();
+
+// Mengembalikan true hanya bila dukungan baru tercatat.
 export async function upvoteReport(reportId, renderAll) {
-  const target = state.reports.find((r) => r.id === reportId);
-  if (!target) return;
+  const target = state.reports.find((r) => String(r.id) === String(reportId));
+  const key = target ? target.id : reportId;
+  const pendingKey = String(reportId);
 
-  if (state.upvotedIds.has(reportId)) {
+  if (state.upvotedIds.has(key)) {
     showToast('Anda sudah mendukung laporan ini.', 'info');
-    return;
+    return false;
   }
+  if (pendingUpvotes.has(pendingKey)) return false;
+  if (!target && !state.isLiveApi) return false;
 
-  if (state.isLiveApi) {
-    const updated = await postUpvote(reportId);
-    if (updated) {
-      Object.assign(target, updated);
+  pendingUpvotes.add(pendingKey);
+  try {
+    if (state.isLiveApi) {
+      const result = await postUpvote(reportId);
+      if (result && result.status === 409) {
+        state.upvotedIds.add(key);
+        renderAll();
+        showToast('Anda sudah mendukung laporan ini.', 'info');
+        return false;
+      }
+      if (!result || !result.ok) {
+        showToast('Gagal mengirim dukungan ke server FastAPI.', 'error');
+        return false;
+      }
+      if (target && result.data && typeof result.data === 'object') {
+        Object.assign(target, result.data);
+      }
     } else {
-      showToast('Gagal mengirim dukungan ke server FastAPI.', 'error');
-      return;
+      target.upvotes += 1;
     }
-  } else {
-    target.upvotes += 1;
-  }
 
-  state.upvotedIds.add(reportId);
-  renderAll();
-  showToast(`Dukungan Anda untuk "${target.title}" tercatat.`, 'success');
+    state.upvotedIds.add(key);
+    renderAll();
+    showToast(target ? `Dukungan Anda untuk "${target.title}" tercatat.` : 'Dukungan Anda tercatat.', 'success');
+    return true;
+  } finally {
+    pendingUpvotes.delete(pendingKey);
+  }
 }
 
 export async function updateReportStatus(reportId, newStatus, renderAll) {
-  const target = state.reports.find((r) => r.id === reportId);
+  const target = state.reports.find((r) => String(r.id) === String(reportId));
   if (!target) return;
 
   if (state.isLiveApi) {
@@ -245,7 +347,9 @@ export async function updateReportStatus(reportId, newStatus, renderAll) {
 export function bindFormEvents(renderAll) {
   const form = document.getElementById('report-form');
   if (!form) return;
-  document.getElementById('input-title').addEventListener('input', debouncedNlpPreview);
-  document.getElementById('input-description').addEventListener('input', debouncedNlpPreview);
+  const titleEl = form.querySelector('#input-title') || document.getElementById('input-title');
+  const descEl = form.querySelector('#input-description') || document.getElementById('input-description');
+  if (titleEl) titleEl.addEventListener('input', debouncedNlpPreview);
+  if (descEl) descEl.addEventListener('input', debouncedNlpPreview);
   form.addEventListener('submit', (e) => handleReportSubmit(e, renderAll));
 }

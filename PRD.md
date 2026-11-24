@@ -34,13 +34,13 @@
 Mengacu pada aturan **STACK 2026**, aplikasi Semifinal wajib berjalan utuh untuk alur inti (*Early Prototype*), namun harus menyisakan 2â€“3 tugas substantif untuk dikerjakan langsung saat **Build Session Final Day (16 Desember 2026)**.
 
 ### 3.1 Cakupan Wajib Semifinal (Deadline: 30 November 2026)
-* **FR-01 Autentikasi Peran (Mahasiswa & Admin):** Halaman masuk & daftar terpisah untuk Mahasiswa (berbasis NIM) dan Admin Sarpras (berbasis Email + Kode Undangan).
+* **FR-01 Autentikasi Peran & Isolasi Portal Sarpras (CIA):** Halaman masuk & daftar terpisah untuk Mahasiswa (berbasis NIM) dan Admin Sarpras (berbasis Email + Kode Undangan). Portal masuk Admin Sarpras (`admin-masuk.html` / subdomain terpisah di produksi) diisolasi dan tidak ditautkan di UI publik (`index.html`) maupun halaman Mahasiswa untuk meminimalkan permukaan serangan dan menjaga aspek keamanan CIA (*Confidentiality, Integrity, Availability*).
 * **FR-02 Peta Interaktif Kampus (Leaflet.js):** Menampilkan area geofencing kampus Politeknik Negeri Indramayu, pin laporan aktif berdasarkan warna status, pin target laporan baru yang dapat diklik/digeser, preset titik cepat kampus, serta tombol lokasi GPS perangkat.
-* **FR-03 Form Pelaporan & Pratinjau NLP Real-Time:** Input judul, deskripsi, koordinat otomatis dari peta, unggah foto bukti (`capture="environment"`) dengan pratinjau, simulasi validasi kesegaran foto (< 24 jam), serta pratinjau kategori otomatis (*Infrastructure*, *Cleanliness*, *Security*).
+* **FR-03 Form Pelaporan (Foto Live Wajib) & Pratinjau NLP Real-Time:** Input judul, deskripsi, koordinat otomatis dari peta, unggah foto bukti **live** langsung dari kamera (`capture="environment"`) tanpa opsi pilihan foto lama, serta pratinjau kategori otomatis (*Infrastructure*, *Cleanliness*, *Security*). Foto yang terdeteksi sebagai foto lama (> 24 jam) ditolak sistem sehingga tidak dapat dikirim.
 * **FR-04 Pencegahan Laporan Duplikat (Radius 15 Meter):** Mendeteksi laporan aktif berkategori sama dalam jarak <= 15 meter (Haversine di mode demo / PostGIS `ST_DWithin` di mode live) dan menampilkan modal konfirmasi untuk mengalihkan pengguna ke tombol `+1 Upvote` atau mengirim paksa (`force_submit=true`).
-* **FR-05 Papan Laporan Publik & Upvote:** Daftar kartu laporan dengan pencarian kata kunci, filter kategori, filter status, pengurutan (dukungan terbanyak / terbaru), tab *Semua laporan* vs *Dukungan saya*, serta tombol *Upvote* idempoten (1 dukungan per pengguna per laporan).
+* **FR-05 Papan Laporan Publik, Profil Laporan Saya & Upvote:** Papan Laporan utama menampilkan seluruh laporan umum dengan pencarian kata kunci, filter kategori, filter status, pengurutan (dukungan terbanyak / terbaru), tab *Semua laporan* vs *Dukungan saya*, serta tombol *Upvote* idempoten (1 dukungan per pengguna per laporan). Khusus pada bagian **Profil**, aksi *Buka Papan Laporan* hanya menampilkan daftar laporan milik pengguna tersebut (bukan laporan umum).
 * **FR-06 Panel Triase Admin Sarpras:** Ringkasan KPI riil dari jumlah laporan, antrean laporan terurut berdasarkan dukungan tertinggi, filter divisi & status, tombol aksi perubahan status bertahap, dan tombol *Lihat peta* yang memusatkan peta ke titik laporan.
-* **FR-07 Tema Terang & Gelap (Light / Dark Mode):** Pengalih tema biru-putih (mode terang) dan biru-slate gelap (mode gelap) yang tersimpan di `localStorage` serta menghormati preferensi sistem.
+* **FR-07 Tema Terang (Soft-White) & Gelap (Light / Dark Mode):** Pengalih tema biru-putih lembut (*soft-white*, tidak terlalu putih agar tidak menyilaukan) dan biru-slate gelap dengan kontras ramah bagi mahasiswa bermata minus maupun petugas Sarpras senior, tersimpan di `localStorage` serta menghormati preferensi sistem.
 
 ### 3.2 Ruang Lingkup Disisakan untuk Final Day (16 Desember 2026)
 Fitur berikut **tidak boleh** diklaim selesai pada demo/proposal Semifinal:
@@ -56,14 +56,14 @@ Fitur berikut **tidak boleh** diklaim selesai pada demo/proposal Semifinal:
 1. Mahasiswa masuk melalui `masuk.html` (atau daftar di `daftar.html`) dan diarahkan ke `user.html`.
 2. Mahasiswa menentukan titik lokasi dengan mengklik peta Leaflet, menggeser pin biru, memilih preset lokasi kampus, atau menekan tombol GPS.
 3. Mahasiswa mengisi **Judul Keluhan** dan **Deskripsi Kondisi** -> komponen pratinjau NLP menampilkan prediksi kategori dan tingkat keyakinan (*confidence*).
-4. Mahasiswa melampirkan **Foto Bukti** (kamera/galeri).
+4. Mahasiswa melampirkan **Foto Bukti Live** langsung dari kamera (opsi foto lama dihilangkan dari form).
 5. Saat tombol **Kirim laporan** ditekan:
    * *Validasi 1 (Kesegaran Foto):* Jika foto terdeteksi > 24 jam, tampilkan banner peringatan `STALE_PHOTO_REJECTED` (HTTP 400) dan hentikan pengiriman.
    * *Validasi 2 (Duplikat Spasial <= 15m):* Jika ditemukan laporan aktif berkategori sama dalam radius 15 meter, buka modal `duplicate-modal` (HTTP 409) agar mahasiswa mendukung laporan yang sudah ada atau memilih tetap kirim baru.
    * *Sukses:* Laporan ditambahkan ke daftar publik dengan status awal `Received` (`Diterima`) dan `1` dukungan awal.
 
 ### Flow B: Triase & Pembaruan Status oleh Admin Sarpras
-1. Petugas Sarpras masuk melalui `admin-masuk.html` dan diarahkan ke `admin.html`.
+1. Petugas Sarpras mengakses portal login terpisah secara langsung melalui `admin-masuk.html` (atau domain khusus Sarpras di produksi, terpisah dari UI publik/mahasiswa) dan diarahkan ke `admin.html`.
 2. Admin melihat ringkasan jumlah laporan (`Semua`, `Menunggu ditangani`, `Sedang diperbaiki`, `Selesai`) dan antrean yang otomatis diurutkan berdasarkan jumlah dukungan terbanyak.
 3. Admin dapat memfilter berdasarkan kategori divisi NLP (`Infrastructure`, `Cleanliness`, `Security`) atau status, lalu mengklik **Lihat peta** untuk memeriksa lokasi tepat kerusakan.
 4. Admin menekan **Mulai perbaikan** (`Received` -> `In Progress`) atau **Tandai selesai** (`In Progress` -> `Resolved`). Perubahan langsung diperbarui pada papan publik dan warna pin peta.
@@ -107,3 +107,4 @@ Dokumen ini menjadi acuan sinkronisasi antara **Frontend** dan **Backend (Ibrahi
 2. **Aksesibilitas (WCAG AA & Keyboard):** Rasio kontras teks minimal `4.5:1` pada Mode Terang maupun Mode Gelap; seluruh kontrol dapat dinavigasi dengan `Tab`, `Enter`, dan `Escape` dengan indikator fokus jelas.
 3. **Ketahanan State UI:** Setiap tampilan data menyediakan *Loading State* (skeleton), *Empty State* (penjelasan penyebab + tombol aksi), dan *Error State* (pesan galat + tombol muat ulang).
 4. **Kesiapan Migrasi React:** Seluruh logika bisnis (API, geo Haversine, klasifikasi NLP, state store) dipisahkan dari manipulasi DOM sehingga dapat dikonversi menjadi *custom hooks* dan komponen React tanpa mengubah kontrak data.
+5. **Keringkasan Teks & Tata Letak Clean:** Teks antarmuka dibuat ringkas, tidak berulang di banyak area, dan informasi pendukung disatukan di satu tempat agar tampilan modern, bersih, dan mudah dipindai.
